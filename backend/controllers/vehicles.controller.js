@@ -1,37 +1,53 @@
 const db = require("../models");
-const Vehicles = require("../models/vehicles.model");
-
-const vehicles = db.vehicles;
 
 // Create and Save a new item
 exports.create = (req, res) => {
-    if (!req.body.title) {
-        res.status(400).send({ message: "Content can not be empty!" });
-        return;
-      }
-    
-      const vehicles = new Vehicles({
-        number: eq.body.number,
-        plate: eq.body.plate,
-        model: req.body.model
+  if (!req.body.number) {
+    res.status(400).send({ message: "Number can not be empty!" });
+    return;
+  }
+  if (!req.body.plate) {
+    res.status(400).send({ message: "Plate can not be empty!" });
+    return;
+  }
+  if (!req.body.model) {
+    res.status(400).send({ message: "Model can not be empty!" });
+    return;
+  }
+
+  const vehicle = new db.vehicles({
+    number: req.body.number,
+    plate: req.body.plate,
+    model: req.body.model
+  });
+
+  vehicle
+    .save(vehicle)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while creating the vehicle."
       });
-    
-      vehicles
-        .save(vehicles)
-        .then(data => {
-          res.send(data);
-        })
-        .catch(err => {
-          res.status(500).send({
-            message:
-              err.message || "Some error occurred while creating the Vehicle."
-          });
-        });    
+    });    
 };
 
-// Retrieve all items from the database.
 exports.findAll = (req, res) => {
-  
+  const plate = req.query.plate;
+  var condition = plate ? { plate: { $regex: new RegExp(plate), $options: "i" } } : {};
+
+  db.vehicles.find(condition)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving vehicles."
+      });
+    });
 };
 
 // Find a single item with an id

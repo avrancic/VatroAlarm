@@ -7,9 +7,9 @@ const db = {};
 db.mongoose = mongoose;
 db.url = dbConfig.url;
 
-db.user = require("./user.model")(mongoose);
-db.employees = require("./employees.model")(mongoose);
-db.incidents = require("./incidents.model")(mongoose);
-db.vehicles = require("./vehicles.model")(mongoose);
+db.users = require("./user.model")(mongoose);
+db.employees = require("./employee.model")(mongoose);
+db.incidents = require("./incident.model")(mongoose);
+db.vehicles = require("./vehicle.model")(mongoose);
 
 module.exports = db;

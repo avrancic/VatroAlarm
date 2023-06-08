@@ -1,20 +1,16 @@
 module.exports = mongoose => {
   var schema = mongoose.Schema(
     {
-      username: {
-        type: String,
+      number: {
+        type: Number,
         required: true
       },
-      password: {
+      plate: {
           type: String,
           required: true
       },
-      name: {
+      model: {
           type: String,
-          required: true
-      },
-      permissions: {
-          type: [[String]],
           required: true
       }
     }
@@ -26,5 +22,5 @@ module.exports = mongoose => {
     return object;
   });
 
-  return mongoose.model("user", schema);
+  return mongoose.model("vehicle", schema);
 };
