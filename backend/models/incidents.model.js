@@ -4,12 +4,6 @@ const { randomUUID } = require('crypto');
 const Incidents = mongoose.model(
   "Incidents",
   new mongoose.Schema({
-    id: {
-        type: 'UUID',
-        required: true,
-        default: () => randomUUID(),
-        index: { unique: true }
-    },
     created_at: {
       type: Date,
       required: true
@@ -34,8 +28,12 @@ const Incidents = mongoose.model(
       type: String,
       required: true
     },
-    coordinates: {
-      type: "Point",
+    latitude: {
+      type: Number,
+      required: true
+    },
+    longitude: {
+      type: Number,
       required: true
     },
     vehiclesId: {

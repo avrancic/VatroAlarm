@@ -4,12 +4,6 @@ const { randomUUID } = require('crypto');
 const Vehicles = mongoose.model(
   "Vehicles",
   new mongoose.Schema({
-    id: {
-        type: 'UUID',
-        required: true,
-        default: () => randomUUID(),
-        index: { unique: true }
-    },
     number: {
         type: Number,
         required: true

@@ -4,12 +4,6 @@ const { randomUUID } = require('crypto');
 const User = mongoose.model(
   "User",
   new mongoose.Schema({
-    id: {
-        type: 'UUID',
-        required: true,
-        default: () => randomUUID(),
-        index: { unique: true }
-    },
     username: {
         type: String,
         required: true
