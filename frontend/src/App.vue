@@ -1,25 +1,28 @@
 <template>
-  <div id="app">
-    <nav class="navbar navbar-expand navbar-dark bg-dark">
-      <router-link to="/" class="navbar-brand">bezKoder</router-link>
-      <div class="navbar-nav mr-auto">
-        <li class="nav-item">
-          <router-link to="/vehicles" class="nav-link">Tutorials</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/add" class="nav-link">Add</router-link>
-        </li>
-      </div>
-    </nav>
-
-    <div class="container mt-3">
-      <router-view />
-    </div>
-  </div>
+  <Navbar/>
+  <div><router-view/></div>
 </template>
 
 <script>
+import Navbar from './components/Navbar.vue'
+
 export default {
-  name: "app"
-};
+  name: 'App',
+  components: {
+    Navbar
+  }
+}
 </script>
+
+<style>
+body {
+  background: #e5e5e5;
+}
+#app {
+  font-family: sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+</style>
