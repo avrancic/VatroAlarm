@@ -1,6 +1,9 @@
 <template>
   <Navbar/>
-  <div><router-view/></div>
+
+  <section class="main-section">
+    <router-view/>
+  </section>
 </template>
 
 <script>
@@ -15,14 +18,18 @@ export default {
 </script>
 
 <style>
+html, body, #app {
+  width: 100%;
+  height: 100%
+}
 body {
   background: #e5e5e5;
 }
 #app {
   font-family: sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  margin-top: 60px;
+  display: flex;
+}
+.main-section {
+  flex: 1 1 auto;
 }
 </style>
