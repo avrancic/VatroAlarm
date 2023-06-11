@@ -6,23 +6,23 @@
         <hr><br><br>
         <alert :message=message v-if="showMessage"></alert>
         <button type="button" class="btn btn-success btn-sm" @click="toggleAddModal">
-          Add vehicle
+          Add employee
         </button>
         <br><br>
         <table class="table table-hover">
           <thead>
             <tr>
-              <th scope="col">Plate</th>
-              <th scope="col">Model</th>
-              <th scope="col">Number</th>
+              <th scope="col">Name</th>
+              <th scope="col">Surname</th>
+              <th scope="col">Type</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in items" :key="index">
-              <td>{{ item.plate }}</td>
-              <td>{{ item.model }}</td>
-              <td>{{ item.number }}</td>
+              <td>{{ item.name }}</td>
+              <td>{{ item.surname }}</td>
+              <td>{{ item.type }}</td>
               <td class="text-end">
                 <div class="btn-group mt-2" role="group">
                   <button type="button" class="btn btn-warning btn-sm" @click="toggleEditModal(item)">Update</button>
@@ -41,7 +41,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Add a new vehicle</h5>
+            <h5 class="modal-title">Add a new employee</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="toggleAddModal">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -49,17 +49,17 @@
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label for="addPlate" class="form-label">Plate:</label>
-                <input type="text" class="form-control" id="addPlate" v-model="addForm.plate" placeholder="Enter plate">
+                <label for="addName" class="form-label">Name:</label>
+                <input type="text" class="form-control" id="addName" v-model="addForm.name" placeholder="Enter name">
               </div>
               <div class="mb-3">
-                <label for="addModel" class="form-label">Model:</label>
-                <input type="text" class="form-control" id="addModel" v-model="addForm.model" placeholder="Enter model">
+                <label for="addSurname" class="form-label">Surname:</label>
+                <input type="text" class="form-control" id="addSurname" v-model="addForm.surname"
+                  placeholder="Enter surname">
               </div>
               <div class="mb-3">
-                <label for="addNumber" class="form-label">Number:</label>
-                <input type="text" class="form-control" id="addNumber" v-model="addForm.number"
-                  placeholder="Enter number">
+                <label for="addType" class="form-label">Number:</label>
+                <input type="text" class="form-control" id="addType" v-model="addForm.type" placeholder="Enter type">
               </div>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary btn-sm" @click="handleAddSubmit">Submit</button>
@@ -86,18 +86,17 @@
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label for="editPlate" class="form-label">Plate:</label>
-                <input type="text" class="form-control" id="editPlate" v-model="editForm.plate" placeholder="Enter title">
+                <label for="editName" class="form-label">Name:</label>
+                <input type="text" class="form-control" id="editName" v-model="editForm.name" placeholder="Enter name">
               </div>
               <div class="mb-3">
-                <label for="editModel" class="form-label">Model:</label>
-                <input type="text" class="form-control" id="editModel" v-model="editForm.model"
-                  placeholder="Enter author">
+                <label for="editSurname" class="form-label">Surname:</label>
+                <input type="text" class="form-control" id="editSurname" v-model="editForm.surname"
+                  placeholder="Enter surname">
               </div>
               <div class="mb-3">
-                <label for="editNumber" class="form-label">Number</label>
-                <input type="text" class="form-control" id="editNumber" v-model="editForm.number"
-                  placeholder="Enter author">
+                <label for="editType" class="form-label">Type</label>
+                <input type="text" class="form-control" id="editType" v-model="editForm.type" placeholder="Enter type">
               </div>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary btn-sm" @click="handleEditSubmit">Submit</button>
@@ -114,7 +113,7 @@
 
 <script>
 import AlertView from './AlertView.vue';
-import VehiclesDataService from "../services/VehiclesDataService";
+import EmployeesDataService from "../services/EmployeesDataService";
 
 export default {
   data() {
@@ -122,16 +121,16 @@ export default {
       activeAddModal: false,
       activeEditModal: false,
       addForm: {
-        plate: '',
-        model: '',
-        number: ''
+        name: '',
+        surname: '',
+        type: ''
       },
       items: [],
       editForm: {
         id: '',
-        plate: '',
-        model: '',
-        number: ''
+        name: '',
+        surname: '',
+        type: ''
       },
       message: '',
       showMessage: false,
@@ -142,10 +141,10 @@ export default {
   },
   methods: {
     addItem(payload) {
-      VehiclesDataService.create(payload)
+      EmployeesDataService.create(payload)
         .then(() => {
           this.getData();
-          this.message = 'Vehicle added!';
+          this.message = 'Employee added!';
           this.showMessage = true;
         })
         .catch(error => {
@@ -154,7 +153,7 @@ export default {
         });
     },
     getData() {
-      VehiclesDataService.getAll()
+      EmployeesDataService.getAll()
         .then(response => {
           this.items = response.data;
           console.log(response.data);
@@ -184,19 +183,19 @@ export default {
       this.updateItem(this.editForm, this.editForm.id);
     },
     initForm() {
-      this.addForm.plate = '';
-      this.addForm.model = '';
-      this.addForm.number = [];
+      this.addForm.name = '';
+      this.addForm.surname = '';
+      this.addForm.type = [];
       this.editForm.id = '';
-      this.editForm.plate = '';
-      this.editForm.model = '';
-      this.editForm.number = [];
+      this.editForm.name = '';
+      this.editForm.surname = '';
+      this.editForm.type = [];
     },
     removeItem(itemID) {
-      VehiclesDataService.delete(itemID)
+      EmployeesDataService.delete(itemID)
         .then(() => {
           this.getData();
-          this.message = 'Vehicle removed!';
+          this.message = 'Employee removed!';
           this.showMessage = true;
         })
         .catch(error => {
@@ -226,10 +225,10 @@ export default {
       }
     },
     updateItem(payload, itemID) {
-      VehiclesDataService.update(itemID, payload)
+      EmployeesDataService.update(itemID, payload)
         .then(() => {
           this.getData();
-          this.message = 'Vehicle updated!';
+          this.message = 'Employee updated!';
           this.showMessage = true;
         })
         .catch(error => {

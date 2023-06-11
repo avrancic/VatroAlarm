@@ -1,6 +1,5 @@
 const db = require("../models");
 
-// Create and Save a new item
 exports.create = (req, res) => {
   if (!req.body.number) {
     res.status(400).send({ message: "Number can not be empty!" });
@@ -15,14 +14,11 @@ exports.create = (req, res) => {
     return;
   }
 
-  const vehicle = new db.vehicles({
+  db.vehicles({
     number: req.body.number,
     plate: req.body.plate,
     model: req.body.model
-  });
-
-  vehicle
-    .save(vehicle)
+  }).save()
     .then(data => {
       res.send(data);
     })
@@ -50,7 +46,6 @@ exports.findAll = (req, res) => {
     });
 };
 
-// Find a single item with an id
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
@@ -67,7 +62,6 @@ exports.findOne = (req, res) => {
     });
 };
 
-// Update an item by the id in the request
 exports.update = (req, res) => {
   if (!req.body) {
     return res.status(400).send({
@@ -92,7 +86,6 @@ exports.update = (req, res) => {
     });
 };
 
-// Delete a item with the specified id in the request
 exports.delete = (req, res) => {
   const id = req.params.id;
 
@@ -115,7 +108,6 @@ exports.delete = (req, res) => {
     });
 };
 
-// Delete all items from the database.
 exports.deleteAll = (req, res) => {
   db.vehicles.deleteMany({})
   .then(data => {
