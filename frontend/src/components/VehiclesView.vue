@@ -191,7 +191,6 @@
   </template>
 
 <script>
-import axios from 'axios';
 import AlertView from './AlertView.vue';
 import VehiclesDataService from "../services/VehiclesDataService";
 
@@ -201,16 +200,16 @@ export default {
       activeAddModal: false,
       activeEditModal: false,
       addForm: {
-        title: '',
-        author: '',
-        read: [],
+        plate: '',
+        model: '',
+        number: ''
       },
       items: [],
       editForm: {
         id: '',
-        title: '',
-        author: '',
-        read: [],
+        plate: '',
+        model: '',
+        number: ''
       },
       message: '',
       showMessage: false,
@@ -221,14 +220,13 @@ export default {
   },
   methods: {
     addItem(payload) {
-      const path = 'http://localhost:5001/books';
-      axios.post(path, payload)
+      VehiclesDataService.create(payload)
         .then(() => {
           this.getData();
           this.message = 'Vehicle added!';
           this.showMessage = true;
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
           this.getData();
         });
@@ -248,16 +246,7 @@ export default {
     },
     handleAddSubmit() {
       this.toggleAddModal();
-      let read = false;
-      if (this.addForm.read[0]) {
-        read = true;
-      }
-      const payload = {
-        title: this.addForm.title,
-        author: this.addForm.author,
-        read, // property shorthand
-      };
-      this.addItem(payload);
+      this.addItem(this.addForm);
       this.initForm();
     },
     handleDeleteItem(item) {
@@ -270,14 +259,7 @@ export default {
     },
     handleEditSubmit() {
       this.toggleEditModal(null);
-      let read = false;
-      if (this.editForm.read) read = true;
-      const payload = {
-        title: this.editForm.title,
-        author: this.editForm.author,
-        read,
-      };
-      this.updateItem(payload, this.editForm.id);
+      this.updateItem(this.editForm, this.editForm.id);
     },
     initForm() {
       this.addForm.title = '';
@@ -289,15 +271,14 @@ export default {
       this.editForm.read = [];
     },
     removeItem(itemID) {
-      const path = `http://localhost:5001/books/${itemID}`;
-      axios.delete(path)
+      VehiclesDataService.delete(itemID)
         .then(() => {
           this.getData();
           this.message = 'Vehicle removed!';
           this.showMessage = true;
         })
-        .catch((error) => {
-          console.error(error);
+        .catch(error => {
+          console.log(error);
           this.getData();
         });
     },
@@ -323,15 +304,14 @@ export default {
       }
     },
     updateItem(payload, itemID) {
-      const path = `http://localhost:5001/books/${itemID}`;
-      axios.put(path, payload)
+      VehiclesDataService.update(itemID, payload)
         .then(() => {
           this.getData();
           this.message = 'Vehicle updated!';
           this.showMessage = true;
         })
-        .catch((error) => {
-          console.error(error);
+        .catch(error => {
+          console.log(error);
           this.getData();
         });
     },

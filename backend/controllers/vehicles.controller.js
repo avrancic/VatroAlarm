@@ -52,20 +52,81 @@ exports.findAll = (req, res) => {
 
 // Find a single item with an id
 exports.findOne = (req, res) => {
-  
+  const id = req.params.id;
+
+  db.vehicles.findById(id)
+    .then(data => {
+      if (!data)
+        res.status(404).send({ message: "Not found vehicle with id " + id });
+      else res.send(data);
+    })
+    .catch(err => {
+      res
+        .status(500)
+        .send({ message: "Error retrieving vehicle with id=" + id });
+    });
 };
 
 // Update an item by the id in the request
 exports.update = (req, res) => {
-  
+  if (!req.body) {
+    return res.status(400).send({
+      message: "Data to update can not be empty!"
+    });
+  }
+
+  const id = req.params.id;
+
+  db.vehicles.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+    .then(data => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot update vehicle with id=${id}.`
+        });
+      } else res.send({ message: "Vehicle updated successfully." });
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating vehicles with id=" + id
+      });
+    });
 };
 
 // Delete a item with the specified id in the request
 exports.delete = (req, res) => {
-  
+  const id = req.params.id;
+
+  db.vehicles.findByIdAndRemove(id)
+    .then(data => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot delete vehicle with id=${id}.`
+        });
+      } else {
+        res.send({
+          message: "Vehicle was deleted successfully!"
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Could not delete vehicle with id=" + id
+      });
+    });
 };
 
 // Delete all items from the database.
 exports.deleteAll = (req, res) => {
-  
+  db.vehicles.deleteMany({})
+  .then(data => {
+    res.send({
+      message: `${data.deletedCount} Vehicles were deleted successfully!`
+    });
+  })
+  .catch(err => {
+    res.status(500).send({
+      message:
+        err.message || "Some error occurred while removing all vehicles."
+    });
+  });
 };

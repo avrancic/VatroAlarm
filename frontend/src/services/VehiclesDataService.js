@@ -24,10 +24,6 @@ class VehiclesDataService {
   deleteAll() {
     return http.delete(`/vehicles`);
   }
-
-  findByTitle(title) {
-    return http.get(`/vehicles?title=${title}`);
-  }
 }
 
 export default new VehiclesDataService();

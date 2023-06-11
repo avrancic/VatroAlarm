@@ -2,7 +2,7 @@ module.exports = mongoose => {
   var schema = mongoose.Schema(
     {
       number: {
-        type: Number,
+        type: String,
         required: true
       },
       plate: {
