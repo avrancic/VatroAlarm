@@ -116,7 +116,7 @@
 </template>
 
 <script>
-import MessageAlert from '../../Alerts/MessageAlert.vue';
+import MessageAlert from '@/components/AdminMessage.vue';
 import EmployeesDataService from "../../../services/Admin/Settings/EmployeesDataService";
 import EmployeesTypesDataService from "../../../services/Admin/Settings/EmployeesTypesDataService";
 

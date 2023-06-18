@@ -1,6 +1,6 @@
 <template>
-    <ol-map :loadTilesWhileAnimating="true" :pixelRatio="1" :loadTilesWhileInteracting="true" style="height: 700px;">
-        <ol-view :center="center"  :rotation="rotation" :zoom="zoom" :projection="projection" />
+    <ol-map :loadTilesWhileAnimating="true" :loadTilesWhileInteracting="true" style="height: 700px;">
+        <ol-view :center="center" :rotation="rotation" :zoom="zoom" :projection="projection" />
 
         <ol-tile-layer>
             <ol-source-osm />

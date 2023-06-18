@@ -1,37 +1,37 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import IncidentsPage from '../components/Admin/IncidentsPage.vue'
+import AdminIncidentsPage from '../views/Admin/IncidentsPage.vue'
 
-import VehiclesPage from '../components/Admin/Settings/VehiclesPage.vue'
-import EmployeesPage from '../components/Admin/Settings/EmployeesPage.vue'
-import EmployeesTypesPage from '../components/Admin/Settings/EmployeesTypesPage.vue'
-import IncidentsTypesPage from '../components/Admin/Settings/IncidentsTypesPage.vue'
+import AdminVehiclesPage from '../views/Admin/Settings/VehiclesPage.vue'
+import AdminEmployeesPage from '../views/Admin/Settings/EmployeesPage.vue'
+import AdminEmployeesTypesPage from '../views/Admin/Settings/EmployeesTypesPage.vue'
+import AdminIncidentsTypesPage from '../views/Admin/Settings/IncidentsTypesPage.vue'
 
 const routes = [
   {
     path: '/admin/incidents',
     name: 'AdminIncidents',
-    component: IncidentsPage
+    component: AdminIncidentsPage
   },
   {
     path: '/admin/settings/incidents_types',
     name: 'AdminSettingsIncidentsTypes',
-    component: IncidentsTypesPage
+    component: AdminIncidentsTypesPage
   },  
   {
     path: '/admin/settings/vehicles',
     name: 'AdminSettingsVehicles',
-    component: VehiclesPage
+    component: AdminVehiclesPage
   },
   {
     path: '/admin/settings/employees',
     name: 'AdminSettingsEmployees',
-    component: EmployeesPage
+    component: AdminEmployeesPage
   },
   {
     path: '/admin/settings/employees_types',
     name: 'AdminSettingsEmployeesTypes',
-    component: EmployeesTypesPage
+    component: AdminEmployeesTypesPage
   }
 ]
 

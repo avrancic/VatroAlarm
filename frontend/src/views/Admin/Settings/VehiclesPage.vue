@@ -113,7 +113,7 @@
 </template>
 
 <script>
-import MessageAlert from '../../Alerts/MessageAlert.vue';
+import MessageAlert from '@/components/AdminMessage.vue';
 import VehiclesDataService from "../../../services/Admin/Settings/VehiclesDataService";
 
 export default {
