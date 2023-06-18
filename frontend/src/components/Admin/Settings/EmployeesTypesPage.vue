@@ -2,9 +2,9 @@
   <div class="container">
     <div class="row">
       <div class="col-sm-10">
-        <h1>Vehicles</h1>
+        <h1>Employees</h1>
         <hr><br><br>
-        <alert :message=message v-if="showMessage"></alert>
+        <alert :message=alertMessage :type=alertMessageType v-if="showMessage"></alert>
         <button type="button" class="btn btn-success btn-sm" @click="toggleAddModal">
           Add employee
         </button>
@@ -12,17 +12,15 @@
         <table class="table table-hover">
           <thead>
             <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Surname</th>
+              <th scope="col">Id</th>
               <th scope="col">Type</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in items" :key="index">
-              <td>{{ item.name }}</td>
-              <td>{{ item.surname }}</td>
-              <td>{{ item.type }}</td>
+              <td>{{ item.Id }}</td>
+              <td>{{ item.Type }}</td>
               <td class="text-end">
                 <div class="btn-group mt-2" role="group">
                   <button type="button" class="btn btn-warning btn-sm" @click="toggleEditModal(item)">Update</button>
@@ -41,7 +39,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Add a new employee</h5>
+            <h5 class="modal-title">Add a new employee type</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="toggleAddModal">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -49,17 +47,8 @@
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label for="addName" class="form-label">Name:</label>
+                <label for="addName" class="form-label">Type:</label>
                 <input type="text" class="form-control" id="addName" v-model="addForm.name" placeholder="Enter name">
-              </div>
-              <div class="mb-3">
-                <label for="addSurname" class="form-label">Surname:</label>
-                <input type="text" class="form-control" id="addSurname" v-model="addForm.surname"
-                  placeholder="Enter surname">
-              </div>
-              <div class="mb-3">
-                <label for="addType" class="form-label">Number:</label>
-                <input type="text" class="form-control" id="addType" v-model="addForm.type" placeholder="Enter type">
               </div>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary btn-sm" @click="handleAddSubmit">Submit</button>
@@ -86,17 +75,8 @@
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label for="editName" class="form-label">Name:</label>
-                <input type="text" class="form-control" id="editName" v-model="editForm.name" placeholder="Enter name">
-              </div>
-              <div class="mb-3">
-                <label for="editSurname" class="form-label">Surname:</label>
-                <input type="text" class="form-control" id="editSurname" v-model="editForm.surname"
-                  placeholder="Enter surname">
-              </div>
-              <div class="mb-3">
-                <label for="editType" class="form-label">Type</label>
-                <input type="text" class="form-control" id="editType" v-model="editForm.type" placeholder="Enter type">
+                <label for="editName" class="form-label">Type:</label>
+                <input type="text" class="form-control" id="editName" v-model="editForm.name" placeholder="Enter type">
               </div>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary btn-sm" @click="handleEditSubmit">Submit</button>
@@ -112,8 +92,8 @@
 </template>
 
 <script>
-import AlertView from './AlertView.vue';
-import EmployeesDataService from "../services/EmployeesDataService";
+import MessageAlert from '../../Alerts/MessageAlert.vue';
+import EmployeesTypesDataService from "../../../services/Admin/Settings/EmployeesTypesDataService";
 
 export default {
   data() {
@@ -122,38 +102,42 @@ export default {
       activeEditModal: false,
       addForm: {
         name: '',
-        surname: '',
-        type: ''
+        type: '',
       },
       items: [],
       editForm: {
         id: '',
-        name: '',
-        surname: '',
-        type: ''
+        type: '',
       },
-      message: '',
+      alertMessage: '',
+      alertMessageType: 1,
       showMessage: false,
+      types: [
+      ]
     };
   },
   components: {
-    alert: AlertView,
+    alert: MessageAlert
   },
   methods: {
     addItem(payload) {
-      EmployeesDataService.create(payload)
+      EmployeesTypesDataService.create(payload)
         .then(() => {
           this.getData();
-          this.message = 'Employee added!';
+          this.alertMessage = 'Employee type added!';
+          this.alertMessageType = 0;
           this.showMessage = true;
         })
         .catch(error => {
           console.log(error);
+          this.alertMessage = 'Employee type cannot be added!';
+          this.alertMessageType = 1;
+          this.showMessage = true;
           this.getData();
         });
     },
     getData() {
-      EmployeesDataService.getAll()
+      EmployeesTypesDataService.getAll()
         .then(response => {
           this.items = response.data;
           console.log(response.data);
@@ -176,7 +160,7 @@ export default {
     handleEditCancel() {
       this.toggleEditModal(null);
       this.initForm();
-      this.getData(); // why?
+      this.getData();
     },
     handleEditSubmit() {
       this.toggleEditModal(null);
@@ -192,14 +176,18 @@ export default {
       this.editForm.type = [];
     },
     removeItem(itemID) {
-      EmployeesDataService.delete(itemID)
+      EmployeesTypesDataService.delete(itemID)
         .then(() => {
           this.getData();
-          this.message = 'Employee removed!';
+          this.alertMessage = 'Employee removed!';
+          this.alertMessageType = 0;
           this.showMessage = true;
         })
         .catch(error => {
           console.log(error);
+          this.alertMessage = 'Employee type cannot be removed!';
+          this.alertMessageType = 1;
+          this.showMessage = true;
           this.getData();
         });
     },
@@ -225,14 +213,18 @@ export default {
       }
     },
     updateItem(payload, itemID) {
-      EmployeesDataService.update(itemID, payload)
+      EmployeesTypesDataService.update(itemID, payload)
         .then(() => {
           this.getData();
-          this.message = 'Employee updated!';
+          this.alertMessage = 'Employee type updated!';
+          this.alertMessageType = 0;
           this.showMessage = true;
         })
         .catch(error => {
           console.log(error);
+          this.alertMessage = 'Employee type cannot be updated!';
+          this.alertMessageType = 1;
+          this.showMessage = true;
           this.getData();
         });
     },

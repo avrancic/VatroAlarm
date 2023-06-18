@@ -36,7 +36,12 @@ db.mongoose
   });
 
   require("./routes/vehicles.route")(app);
+  
+  require("./routes/incidents.route")(app);
+  require("./routes/incidents_types.route")(app);
+
   require("./routes/employees.route")(app);
+  require("./routes/employees_types.route")(app);
   
 // set port, listen for requests
 const PORT = process.env.PORT || 8081;

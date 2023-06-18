@@ -3,6 +3,7 @@ module.exports = mongoose => {
     {
       username: {
         type: String,
+        minlength: 1,
         required: true
       },
       password: {
@@ -11,6 +12,7 @@ module.exports = mongoose => {
       },
       name: {
           type: String,
+          minlength: 1,
           required: true
       },
       permissions: {

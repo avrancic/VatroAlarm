@@ -71,7 +71,7 @@ exports.update = (req, res) => {
 
   const id = req.params.id;
 
-  db.vehicles.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+  db.vehicles.findByIdAndUpdate(id, req.body, { useFindAndModify: false , runValidators: true})
     .then(data => {
       if (!data) {
         res.status(404).send({

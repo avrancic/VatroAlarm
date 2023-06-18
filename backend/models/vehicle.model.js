@@ -3,14 +3,17 @@ module.exports = mongoose => {
     {
       number: {
         type: String,
+        minlength: 1,
         required: true
       },
       plate: {
           type: String,
+          minlength: 1,
           required: true
       },
       model: {
           type: String,
+          minlength: 1,
           required: true
       }
     }

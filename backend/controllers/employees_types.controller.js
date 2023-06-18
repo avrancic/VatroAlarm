@@ -2,25 +2,15 @@ const db = require("../models");
 
 exports.create = (req, res) => {
   if (!req.body.name) {
-    res.status(400).send({ message: "Name can not be empty!" });
-    return;
-  }
-  if (!req.body.surname) {
-    res.status(400).send({ message: "Surname can not be empty!" });
-    return;
-  }
-  if (!req.body.type) {
     res.status(400).send({ message: "Type can not be empty!" });
     return;
   }
 
-  db.employees({
-    name: req.body.name,
-    surname: req.body.surname,
-    type: req.body.type
+  db.employees_types({
+    name: req.body.name
   }).save()
     .then(data => {
-      res.send({ message: "Employee created!" });
+      res.send(data);
     })
     .catch(err => {
       res.status(500).send({
@@ -31,7 +21,7 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-  db.employees.find()
+  db.employees_types.find()
     .then(data => {
       res.send(data);
     })
@@ -40,22 +30,6 @@ exports.findAll = (req, res) => {
         message:
           err.message || "Some error occurred while retrieving items."
       });
-    });
-};
-
-exports.findOne = (req, res) => {
-  const id = req.params.id;
-
-  db.employees.findById(id)
-    .then(data => {
-      if (!data)
-        res.status(404).send({ message: "Not found item with id " + id });
-      else res.send(data);
-    })
-    .catch(err => {
-      res
-        .status(500)
-        .send({ message: "Error retrieving item with id=" + id });
     });
 };
 
@@ -68,7 +42,7 @@ exports.update = (req, res) => {
 
   const id = req.params.id;
 
-  db.employees.findByIdAndUpdate(id, req.body, { useFindAndModify: false , runValidators: true})
+  db.employees_types.findByIdAndUpdate(id, req.body, { useFindAndModify: false , runValidators: true})
     .then(data => {
       if (!data) {
         res.status(404).send({
@@ -86,7 +60,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  db.employees.findByIdAndRemove(id)
+  db.employees_types.findByIdAndRemove(id)
     .then(data => {
       if (!data) {
         res.status(404).send({
@@ -103,19 +77,4 @@ exports.delete = (req, res) => {
         message: "Could not delete item with id=" + id
       });
     });
-};
-
-exports.deleteAll = (req, res) => {
-  db.employees.deleteMany({})
-  .then(data => {
-    res.send({
-      message: `${data.deletedCount} Item were deleted successfully!`
-    });
-  })
-  .catch(err => {
-    res.status(500).send({
-      message:
-        err.message || "Some error occurred while removing all items."
-    });
-  });
 };

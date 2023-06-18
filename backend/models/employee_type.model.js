@@ -5,16 +5,6 @@ module.exports = mongoose => {
         type: String,
         minlength: 1,
         required: true
-      },
-      surname: {
-        type: String,
-        minlength: 1,
-        required: true
-      },
-      type: {
-        type: String,
-        minlength: 1,
-        required: true
       }
     }
   );
@@ -25,5 +15,5 @@ module.exports = mongoose => {
     return object;
   });
 
-  return mongoose.model("employee", schema);
+  return mongoose.model("employee_type", schema);
 };

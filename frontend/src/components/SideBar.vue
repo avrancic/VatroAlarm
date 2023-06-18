@@ -1,36 +1,48 @@
 <template>
-    <nav id="sidebar" v-bind:class = "(leftNavIsOpen)?'active':''">
+    <nav id="sidebar" v-bind:class="(leftNavIsOpen) ? 'active' : ''">
         <div class="sidebar-header">
             <h1>VatroAlarm</h1>
         </div>
         <ul class="text-secondary">
             <li>
-                <RouterLink to="/vehicles">Vehicles</RouterLink>
-            </li>
-            <li>
-                <RouterLink to="/employees">Employees</RouterLink>
-            </li>
-            <li>
-                <a href="/test">test</a>
-            </li>
-            <li>
-                <a href="/test">test</a>
-            </li>
-            <li>
-                <a href="/test">test</a>
+                <RouterLink :to="{ name: 'AdminIncidents' }">Incidents</RouterLink>
             </li>
         </ul>
+
+        <hr class="navbar-divider my-5 opacity-20">
+
+        <ul class="text-secondary">
+            <li>
+                <span class="nav-link text-xs font-semibold text-uppercase text-muted ls-wide" href="#">
+                    Settings
+                </span>
+            </li>
+            <li>
+                <RouterLink :to="{ name: 'AdminSettingsVehicles' }">Vehicles list</RouterLink>
+            </li>
+            <li>
+                <RouterLink :to="{ name: 'AdminSettingsEmployees' }">Employees list</RouterLink>
+            </li>
+            <li>
+                <RouterLink :to="{ name: 'AdminSettingsEmployeesTypes' }">Employees types list</RouterLink>
+            </li>
+            <li>
+                <RouterLink :to="{ name: 'AdminSettingsIncidentsTypes' }">Incidents types list</RouterLink>
+            </li>
+        </ul>
+
     </nav>
 </template>
 
 <script>
 export default {
-  props: {
-    leftNavIsOpen: {
-      type: Boolean
+    props: {
+        leftNavIsOpen: {
+            type: Boolean
+        }
     }
-  }}
-  </script>
+}
+</script>
 
 <style>
 #sidebar h1 {

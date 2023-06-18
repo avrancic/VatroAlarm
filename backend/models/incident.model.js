@@ -11,18 +11,22 @@ module.exports = mongoose => {
       },
       type: {
           type: String,
+          minlength: 1,
           required: true
       },
       description: {
         type: String,
+        minlength: 1,
         required: true
       },
       city: {
         type: String,
+        minlength: 1,
         required: true
       },
-      adress: {
+      address: {
         type: String,
+        minlength: 1,
         required: true
       },
       latitude: {
