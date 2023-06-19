@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import LoginDataService from '@/services/User/LoginDataService';
+import store from "@/store";
 
 export default {
   data() {
@@ -43,19 +43,7 @@ export default {
   },
   methods: {
     login() {
-      LoginDataService.login({
-        username: this.username,
-        password: this.password
-      })
-        .then(res => {
-          if (res.status === 200) {
-            localStorage.setItem('token', res.data.token);
-            this.$router.push('/');
-          }
-        }, err => {
-          console.log(err.response);
-          this.error = err.response.data.error
-        })
+      store.dispatch("login", this.username, this.password);
     }
   }
 }

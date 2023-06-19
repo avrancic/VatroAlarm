@@ -39,7 +39,6 @@ import { Carousel, Slide, Navigation } from 'vue3-carousel'
 import IncidentCard from '@/components/DisplayIncidentCard.vue'
 
 export default {
-  name: 'App',
   components: {
     Carousel,
     Slide,
@@ -49,7 +48,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 html {
   position: relative;
   min-height: 100%;

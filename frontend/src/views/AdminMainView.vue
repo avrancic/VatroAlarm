@@ -1,4 +1,6 @@
 <template>
+      <div class="admin">
+
     <nav id="sidebar" v-bind:class="(leftNavIsOpen) ? 'active' : ''">
         <div class="sidebar-header">
             <h1>VatroAlarm</h1>
@@ -64,6 +66,7 @@
             <router-view />
         </div>
     </div>
+</div>
 </template>
 
 <script>
@@ -74,19 +77,15 @@ export default {
 } 
 </script>
 
-<style>
-#app {
+
+<style scoped>
+#app .admin {
     font-family: sans-serif;
     display: flex;
     width: 100%;
     align-items: stretch;
     overflow-x: hidden
 }
-
-.container {
-    margin-top: 40px
-}
-
 body {
     width: 100%;
     height: 100%;

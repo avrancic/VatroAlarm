@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import store from "@/store";
+
 import LoginMainView from '@/views/LoginMainView.vue'
 import DisplayMainView from '@/views/DisplayMainView.vue'
 
@@ -11,6 +13,14 @@ import AdminSettingsEmployeesTypesChildView from '@/views/AdminSettingsEmployees
 import AdminSettingsIncidentsTypesChildView from '@/views/AdminSettingsIncidentsTypesChildView.vue'
 import AdminSettingsUsersChildView from '@/views/AdminSettingsUsersChildView.vue'
 
+const authGuard = (to, from, next) => {
+  if (store.getters.isAuthenticated) {
+    next();
+  } else {
+    next("/login")
+  }
+};
+
 const routes = [
   {
     path: '/login',
@@ -21,11 +31,13 @@ const routes = [
     path: '/display',
     name: 'Display',
     component: DisplayMainView,
+    beforeEnter: authGuard
   },
   {
     path: '/admin',
     name: 'Admin',
     component: AdminMainView,
+    beforeEnter: authGuard,
     children: [
         { path: 'incidents', name:'AdminIncidents', component: AdminIncidentsChildView },
         { path: 'settings/vehicles', name:'AdminSettingsVehicles', component: AdminSettingsVehiclesChildView },
