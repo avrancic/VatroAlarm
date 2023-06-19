@@ -7,13 +7,15 @@ const db = {};
 db.mongoose = mongoose;
 db.url = dbConfig.url;
 
-db.users = require("./user.model")(mongoose);
-db.vehicles = require("./vehicle.model")(mongoose);
+db.user = require("./user.model")(mongoose);
+db.vehicle = require("./vehicle.model")(mongoose);
 
-db.incidents = require("./incident.model")(mongoose);
-db.incidents_types = require("./incident_type.model")(mongoose);
+db.incident = require("./incident.model")(mongoose);
+db.incident_type = require("./incident_type.model")(mongoose);
 
-db.employees = require("./employee.model")(mongoose);
-db.employees_types = require("./employee_type.model")(mongoose);
+db.employee = require("./employee.model")(mongoose);
+db.employee_type = require("./employee_type.model")(mongoose);
+
+db.user_role = require("./user_role.model")(mongoose);
 
 module.exports = db;

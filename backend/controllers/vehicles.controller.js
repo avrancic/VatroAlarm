@@ -14,7 +14,7 @@ exports.create = (req, res) => {
     return;
   }
 
-  db.vehicles({
+  db.vehicle({
     number: req.body.number,
     plate: req.body.plate,
     model: req.body.model
@@ -34,7 +34,7 @@ exports.findAll = (req, res) => {
   const plate = req.query.plate;
   var condition = plate ? { plate: { $regex: new RegExp(plate), $options: "i" } } : {};
 
-  db.vehicles.find(condition)
+  db.vehicle.find(condition)
     .then(data => {
       res.send(data);
     })
@@ -49,7 +49,7 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  db.vehicles.findById(id)
+  db.vehicle.findById(id)
     .then(data => {
       if (!data)
         res.status(404).send({ message: "Not found vehicle with id " + id });
@@ -71,7 +71,7 @@ exports.update = (req, res) => {
 
   const id = req.params.id;
 
-  db.vehicles.findByIdAndUpdate(id, req.body, { useFindAndModify: false , runValidators: true})
+  db.vehicle.findByIdAndUpdate(id, req.body, { useFindAndModify: false , runValidators: true})
     .then(data => {
       if (!data) {
         res.status(404).send({
@@ -89,7 +89,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  db.vehicles.findByIdAndRemove(id)
+  db.vehicle.findByIdAndRemove(id)
     .then(data => {
       if (!data) {
         res.status(404).send({
@@ -109,7 +109,7 @@ exports.delete = (req, res) => {
 };
 
 exports.deleteAll = (req, res) => {
-  db.vehicles.deleteMany({})
+  db.vehicle.deleteMany({})
   .then(data => {
     res.send({
       message: `${data.deletedCount} Vehicles were deleted successfully!`

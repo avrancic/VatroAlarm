@@ -114,7 +114,7 @@
 
 <script>
 import MessageAlert from '@/components/AdminMessage.vue';
-import VehiclesDataService from "@/services/Admin/Settings/VehiclesDataService";
+import VehiclesDataService from "@/services/AdminSettingsVehiclesDataService";
 
 export default {
   data() {

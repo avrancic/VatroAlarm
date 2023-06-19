@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-class MapDataService {
+class AdminIncidentsMapDataService {
   get(array) {
     return axios.get('https://nominatim.openstreetmap.org/reverse', {
         params: {
@@ -12,4 +12,4 @@ class MapDataService {
   }
 }
 
-export default new MapDataService();
+export default new AdminIncidentsMapDataService();

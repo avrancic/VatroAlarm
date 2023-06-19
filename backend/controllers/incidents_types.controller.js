@@ -6,7 +6,7 @@ exports.create = (req, res) => {
     return;
   }
 
-  db.incidents_types({
+  db.incident_type({
     name: req.body.name
   }).save()
     .then(data => {
@@ -21,7 +21,7 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-  db.incidents_types.find()
+  db.incident_type.find()
     .then(data => {
       res.send(data);
     })
@@ -42,7 +42,7 @@ exports.update = (req, res) => {
 
   const id = req.params.id;
 
-  db.incidents_types.findByIdAndUpdate(id, req.body, { useFindAndModify: false , runValidators: true})
+  db.incident_type.findByIdAndUpdate(id, req.body, { useFindAndModify: false , runValidators: true})
     .then(data => {
       if (!data) {
         res.status(404).send({
@@ -60,7 +60,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  db.incidents_types.findByIdAndRemove(id)
+  db.incident_type.findByIdAndRemove(id)
     .then(data => {
       if (!data) {
         res.status(404).send({

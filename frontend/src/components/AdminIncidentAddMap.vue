@@ -23,7 +23,7 @@
 import { ref } from "vue";
 
 import markerIcon from "@/assets/marker.png";
-import MapDataService from "../services/MapDataService";
+import MapDataService from "../services/AdminIncidentsMapDataService";
 
 export default {
     setup() {

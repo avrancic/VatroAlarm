@@ -6,105 +6,102 @@ const jwt = require('jsonwebtoken');
 const jwtSecret = "jwtSecret1234567890";
 
 exports.create = (req, res) => {
-    const name = req.body.name;
-    const username = req.body.username;
-    const password = req.body.password;
-    const permissions = req.body.permissions;
+  db.user.findOne({
+    username: req.body.username
+  })
+    .then(data => {
+      if (data) res.status(400).send({ message: "User alredy exists." });
 
-    if (!name || !username || !password) {
-        res.status(400).send({ message: "Please enter all values." });
-
-        return;
-    }
-
-    db.users.findOne({ username: username })
-        .then((data) => {
-            if (data != null) {
-                res.status(400).send({ message: "User already exists." });
-                return;
-            }
-        })
-        .catch((err) => {
-            res.status(500).send({ message: err.message || "Some error occurred." });
-            return;
-        });
-
-    bcrypt
-        .hash(password, 10)
-        .then(hash => {
-            db.users({
-                name: name,
-                username: username,
-                password: hash,
-                accessToken: "",
-                permissions: permissions
-            }).save()
-                .then(data => {
-                    res.send({ message: "User created!" });
-                })
-                .catch(err => {
-                    res.status(500).send({
-                        message:
-                            err.message || "Some error occurred while creating the item."
-                    });
-                });
+      db.user_role.findOne({ name: req.body.role })
+        .then(role => {
+          new db.user({
+            name: req.body.name,
+            username: req.body.username,
+            password: bcrypt.hashSync(req.body.password, 8),
+            role: role._id
+          }).save()
+            .then(() => {
+              return res.status(200).send({ message: "User created!" });
             })
-        .catch(err => res.status(500).send({
-            message:
-                err.message || "Some error occurred while creating the item."
-        }))
+            .catch(err => {
+              return res.status(500).send({ message: "Usr cannot be createed!" });
+            })
+        })
+        .catch(err => {
+          return res.status(500).send({ message: "Usr cannot be createed!" });
+        })
+    })
 };
 
 exports.login = (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
+  db.user.findOne({
+    username: req.body.username
+  })
+    .then(data => {
+      if (!data) {
+        return res.status(404).send({ message: "User Not found." });
+      }
 
-    // check if email exists
-    const user = db.users.findOne({
-        username: username
-    });
+      var passwordIsValid = bcrypt.compareSync(
+        req.body.password,
+        data.password
+      );
 
-    if (user == null) {
-        res.status(404).send({ message: "User does not exists." });
-        return;
-    }
+      if (!passwordIsValid) {
+        return res.status(401).send({
+          accessToken: null,
+          message: "Invalid Password!"
+        });
+      }
 
-    // check if password is correct
-    bcrypt.compare(password, user.password, async function (error, isVerify) {
-        if (isVerify) {
+      var token = jwt.sign({ id: data._id }, jwtSecret, {
+        expiresIn: 86400 // 24 hours
+      });
 
-            // generate JWT of user
-            const accessToken = jwt.sign({
-                "userId": user._id.toString()
-            }, jwtSecret);
-
-            // update JWT of user in database
-            await db.users.findOneAndUpdate({
-                username: username
-            }, {
-                $set: {
-                    "accessToken": accessToken
-                }
-            });
-
-            res.status(200).send({ message: "Login successfully.", accessToken: accessToken });
-
-            return;
-        }
-
-        res.status(404).send({ message: "Password is not correct." });
+      return res.status(200).send({
+        id: data._id,
+        name: data.name,
+        username: data.username,
+        role: data.role,
+        accessToken: token
+      });
+    })
+    .catch((err) => {
+      return res.status(500).send({ message: err })
     });
 };
 
 exports.findAll = (req, res) => {
-    db.users.find({}, "name username permissions")
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while retrieving items."
-            });
+  db.user.find({}, "name username permissions")
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving items."
+      });
+    });
+};
+
+exports.delete = (req, res) => {
+  const id = req.params.id;
+
+  db.user.findByIdAndRemove(id)
+    .then(data => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot delete item with id=${id}.`
         });
+      } else {
+        res.send({
+          message: "Item was deleted successfully!"
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Could not delete item with id=" + id
+      });
+    });
 };

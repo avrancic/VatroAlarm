@@ -1,6 +1,6 @@
-import http from "../../../http-common";
+import http from "@/http-common";
 
-class IncidentsTypesDataService {
+class AdminSettingsIncidentsTypesDataService {
   getAll() {
     return http.get("/incidents_types");
   }
@@ -26,4 +26,4 @@ class IncidentsTypesDataService {
   }
 }
 
-export default new IncidentsTypesDataService();
+export default new AdminSettingsIncidentsTypesDataService();

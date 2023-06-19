@@ -14,7 +14,7 @@ exports.create = (req, res) => {
     return;
   }
 
-  db.employees({
+  db.employee({
     name: req.body.name,
     surname: req.body.surname,
     type: req.body.type
@@ -31,7 +31,7 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-  db.employees.find()
+  db.employee.find()
     .then(data => {
       res.send(data);
     })
@@ -46,7 +46,7 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  db.employees.findById(id)
+  db.employee.findById(id)
     .then(data => {
       if (!data)
         res.status(404).send({ message: "Not found item with id " + id });
@@ -68,7 +68,7 @@ exports.update = (req, res) => {
 
   const id = req.params.id;
 
-  db.employees.findByIdAndUpdate(id, req.body, { useFindAndModify: false , runValidators: true})
+  db.employee.findByIdAndUpdate(id, req.body, { useFindAndModify: false , runValidators: true})
     .then(data => {
       if (!data) {
         res.status(404).send({
@@ -86,7 +86,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  db.employees.findByIdAndRemove(id)
+  db.employee.findByIdAndRemove(id)
     .then(data => {
       if (!data) {
         res.status(404).send({
@@ -106,7 +106,7 @@ exports.delete = (req, res) => {
 };
 
 exports.deleteAll = (req, res) => {
-  db.employees.deleteMany({})
+  db.employee.deleteMany({})
   .then(data => {
     res.send({
       message: `${data.deletedCount} Item were deleted successfully!`

@@ -1,6 +1,6 @@
-import http from "../../../http-common";
+import http from "@/http-common";
 
-class VehiclesDataService {
+class AdminSettingsVehiclesDataService {
   getAll() {
     return http.get("/vehicles");
   }
@@ -26,4 +26,4 @@ class VehiclesDataService {
   }
 }
 
-export default new VehiclesDataService();
+export default new AdminSettingsVehiclesDataService();

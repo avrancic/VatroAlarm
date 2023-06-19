@@ -94,7 +94,7 @@
 
 <script>
 import MessageAlert from '@/components/AdminMessage.vue';
-import IncidentsDataService from "@/services/Admin/Settings/IncidentsTypesDataService";
+import IncidentsDataService from "@/services/AdminSettingsIncidentsTypesDataService";
 
 export default {
   data() {

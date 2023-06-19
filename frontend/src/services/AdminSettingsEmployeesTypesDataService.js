@@ -1,6 +1,6 @@
-import http from "../../../http-common";
+import http from "@/http-common";
 
-class EmployeesTypesDataService {
+class AdminSettingsEmployeesTypesDataService {
   getAll() {
     return http.get("/employees_types");
   }
@@ -26,4 +26,4 @@ class EmployeesTypesDataService {
   }
 }
 
-export default new EmployeesTypesDataService();
+export default new AdminSettingsEmployeesTypesDataService();

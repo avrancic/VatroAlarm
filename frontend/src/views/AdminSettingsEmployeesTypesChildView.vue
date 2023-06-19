@@ -93,7 +93,7 @@
 
 <script>
 import MessageAlert from '@/components/AdminMessage.vue';
-import EmployeesTypesDataService from "@/services/Admin/Settings/EmployeesTypesDataService";
+import EmployeesTypesDataService from "@/services/AdminSettingsEmployeesTypesDataService";
 
 export default {
   data() {

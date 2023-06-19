@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import store from "@/store";
-
 import LoginMainView from '@/views/LoginMainView.vue'
 import DisplayMainView from '@/views/DisplayMainView.vue'
 
@@ -14,10 +12,14 @@ import AdminSettingsIncidentsTypesChildView from '@/views/AdminSettingsIncidents
 import AdminSettingsUsersChildView from '@/views/AdminSettingsUsersChildView.vue'
 
 const authGuard = (to, from, next) => {
-  if (store.getters.isAuthenticated) {
-    next();
+  const publicPages = ['/login'];
+  const authRequired = !publicPages.includes(to.path);
+  const loggedIn = localStorage.getItem('user');
+
+  if (authRequired && !loggedIn) {
+    next('/login');
   } else {
-    next("/login")
+    next();
   }
 };
 

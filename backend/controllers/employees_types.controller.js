@@ -6,7 +6,7 @@ exports.create = (req, res) => {
     return;
   }
 
-  db.employees_types({
+  db.employee_type({
     name: req.body.name
   }).save()
     .then(data => {
@@ -21,7 +21,7 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-  db.employees_types.find()
+  db.employee_type.find()
     .then(data => {
       res.send(data);
     })
@@ -42,7 +42,7 @@ exports.update = (req, res) => {
 
   const id = req.params.id;
 
-  db.employees_types.findByIdAndUpdate(id, req.body, { useFindAndModify: false , runValidators: true})
+  db.employee_type.findByIdAndUpdate(id, req.body, { useFindAndModify: false , runValidators: true})
     .then(data => {
       if (!data) {
         res.status(404).send({
@@ -60,7 +60,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  db.employees_types.findByIdAndRemove(id)
+  db.employee_type.findByIdAndRemove(id)
     .then(data => {
       if (!data) {
         res.status(404).send({

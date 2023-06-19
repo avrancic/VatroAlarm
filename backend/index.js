@@ -36,15 +36,12 @@ db.mongoose
     process.exit();
   });
 
-  require("./routes/users.route")(app);
+initial();
 
-  require("./routes/vehicles.route")(app);
-
-  require("./routes/incidents.route")(app);
-  require("./routes/incidents_types.route")(app);
-
-  require("./routes/employees.route")(app);
-  require("./routes/employees_types.route")(app);
+require("./routes/users.route")(app);
+require("./routes/vehicles.route")(app);
+require("./routes/incidents.route")(app);
+require("./routes/employees.route")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8081;
@@ -52,3 +49,56 @@ const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
+
+function initial() {
+  db.user_role.estimatedDocumentCount()
+    .then((count) => {
+      if (count === 0) {
+        new db.user_role({
+          name: "user"
+        }).save()
+          .then(() => {
+            console.log("added 'user' to roles collection");
+          });
+
+        new db.user_role({
+          name: "admin"
+        }).save()
+          .then(() => {
+            console.log("added 'admin' to roles collection");
+          });
+      }
+    })
+    .catch(err => {
+      console.log("Error", err);
+    });
+
+  db.employee_type.estimatedDocumentCount()
+    .then((count) => {
+      if (count === 0) {
+        new db.employee_type({
+          name: "test"
+        }).save()
+          .then(() => {
+            console.log("added 'test1' to employee types collection");
+          });
+
+        new db.employee_type({
+          name: "test2"
+        }).save()
+          .then(() => {
+            console.log("added 'test2' to employee types collection");
+          });
+
+        new db.employee_type({
+          name: "test3"
+        }).save()
+          .then(() => {
+            console.log("added 'test3' to employee types collection");
+          });
+      }
+    })
+    .catch(err => {
+      console.log("Error", err);
+    });
+}

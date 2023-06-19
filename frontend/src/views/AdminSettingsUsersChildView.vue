@@ -63,11 +63,10 @@
                   placeholder="Enter USERNAME">
               </div>
               <div class="mb-3">
-                <label for="addSurname" class="form-label">Permisisons:</label>
-                <select class="form-control" id="addSurname" v-model="addForm.permisisons" multiple>
-                  <option>A</option>
-                  <option>B</option>
-                  <option>C</option>
+                <label for="addSurname" class="form-label">Role:</label>
+                <select class="form-control" id="addSurname" v-model="addForm.role">
+                  <option>admin</option>
+                  <option>user</option>
                 </select>
               </div>
               <div class="btn-group" role="group">
@@ -123,7 +122,7 @@
 
 <script>
 import MessageAlert from '@/components/AdminMessage.vue';
-import UsersDataService from "@/services/Admin/Settings/UsersDataService";
+import UsersDataService from "@/services/AdminSettingsUsersDataService";
 
 export default {
   data() {
@@ -134,14 +133,14 @@ export default {
         name: '',
         username: '',
         password: '',
-        permisisons: []
+        role: ''
       },
       items: [],
       editForm: {
         id: '',
         name: '',
         password: '',
-        permisisons: []
+        role: ''
       },
       alertMessage: '',
       alertMessageType: 1,

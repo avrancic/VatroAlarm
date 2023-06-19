@@ -1,6 +1,6 @@
-import http from "../../../http-common";
+import http from "@/http-common";
 
-class UsersDataService {
+class AdminSettingsUsersDataService {
   getAll() {
     return http.get("/users");
   }
@@ -18,4 +18,4 @@ class UsersDataService {
   }
 }
 
-export default new UsersDataService();
+export default new AdminSettingsUsersDataService();

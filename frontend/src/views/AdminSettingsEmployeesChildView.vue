@@ -121,8 +121,8 @@
 
 <script>
 import MessageAlert from '@/components/AdminMessage.vue';
-import EmployeesDataService from "@/services/Admin/Settings/EmployeesDataService";
-import EmployeesTypesDataService from "@/services/Admin/Settings/EmployeesTypesDataService";
+import EmployeesDataService from "@/services/AdminSettingsEmployeesDataService";
+import EmployeesTypesDataService from "@/services/AdminSettingsEmployeesTypesDataService";
 
 export default {
   data() {
