@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col-sm-10">
-        <h1>Employees</h1>
+        <h1>Incidents types</h1>
         <hr><br><br>
         <alert :message=alertMessage :type=alertMessageType v-if="showMessage"></alert>
         <button type="button" class="btn btn-success btn-sm" @click="toggleAddModal">
@@ -12,15 +12,16 @@
         <table class="table table-hover">
           <thead>
             <tr>
-              <th scope="col">Id</th>
+              <th scope="col">Name</th>
+              <th scope="col">Surname</th>
               <th scope="col">Type</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in items" :key="index">
-              <td>{{ item.Id }}</td>
-              <td>{{ item.Type }}</td>
+              <td>{{ item.id }}</td>
+              <td>{{ item.name }}</td>
               <td class="text-end">
                 <div class="btn-group mt-2" role="group">
                   <button type="button" class="btn btn-warning btn-sm" @click="toggleEditModal(item)">Update</button>
@@ -39,7 +40,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Add a new employee type</h5>
+            <h5 class="modal-title">Add a new incident type</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="toggleAddModal">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -47,7 +48,7 @@
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label for="addName" class="form-label">Type:</label>
+                <label for="addName" class="form-label">Name:</label>
                 <input type="text" class="form-control" id="addName" v-model="addForm.name" placeholder="Enter name">
               </div>
               <div class="btn-group" role="group">
@@ -75,8 +76,8 @@
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label for="editName" class="form-label">Type:</label>
-                <input type="text" class="form-control" id="editName" v-model="editForm.name" placeholder="Enter type">
+                <label for="editName" class="form-label">Name:</label>
+                <input type="text" class="form-control" id="editName" v-model="editForm.name" placeholder="Enter name">
               </div>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary btn-sm" @click="handleEditSubmit">Submit</button>
@@ -93,7 +94,7 @@
 
 <script>
 import MessageAlert from '@/components/AdminMessage.vue';
-import EmployeesTypesDataService from "../../../services/Admin/Settings/EmployeesTypesDataService";
+import IncidentsDataService from "@/services/Admin/Settings/IncidentsTypesDataService";
 
 export default {
   data() {
@@ -101,19 +102,16 @@ export default {
       activeAddModal: false,
       activeEditModal: false,
       addForm: {
-        name: '',
-        type: '',
+        name: ''
       },
       items: [],
       editForm: {
         id: '',
-        type: '',
+        name: ''
       },
       alertMessage: '',
       alertMessageType: 1,
-      showMessage: false,
-      types: [
-      ]
+      showMessage: false
     };
   },
   components: {
@@ -121,23 +119,23 @@ export default {
   },
   methods: {
     addItem(payload) {
-      EmployeesTypesDataService.create(payload)
+      IncidentsDataService.create(payload)
         .then(() => {
           this.getData();
-          this.alertMessage = 'Employee type added!';
+          this.alertMessage = 'Employee added!';
           this.alertMessageType = 0;
           this.showMessage = true;
         })
         .catch(error => {
           console.log(error);
-          this.alertMessage = 'Employee type cannot be added!';
+          this.alertMessage = 'Employee cannot be added!';
           this.alertMessageType = 1;
           this.showMessage = true;
           this.getData();
         });
     },
     getData() {
-      EmployeesTypesDataService.getAll()
+      IncidentsDataService.getAll()
         .then(response => {
           this.items = response.data;
           console.log(response.data);
@@ -160,7 +158,7 @@ export default {
     handleEditCancel() {
       this.toggleEditModal(null);
       this.initForm();
-      this.getData();
+      this.getData(); // why?
     },
     handleEditSubmit() {
       this.toggleEditModal(null);
@@ -168,15 +166,11 @@ export default {
     },
     initForm() {
       this.addForm.name = '';
-      this.addForm.surname = '';
-      this.addForm.type = [];
       this.editForm.id = '';
       this.editForm.name = '';
-      this.editForm.surname = '';
-      this.editForm.type = [];
     },
     removeItem(itemID) {
-      EmployeesTypesDataService.delete(itemID)
+      IncidentsDataService.delete(itemID)
         .then(() => {
           this.getData();
           this.alertMessage = 'Employee removed!';
@@ -185,7 +179,7 @@ export default {
         })
         .catch(error => {
           console.log(error);
-          this.alertMessage = 'Employee type cannot be removed!';
+          this.alertMessage = 'Employee cannot be removed!';
           this.alertMessageType = 1;
           this.showMessage = true;
           this.getData();
@@ -213,16 +207,16 @@ export default {
       }
     },
     updateItem(payload, itemID) {
-      EmployeesTypesDataService.update(itemID, payload)
+      IncidentsDataService.update(itemID, payload)
         .then(() => {
           this.getData();
-          this.alertMessage = 'Employee type updated!';
+          this.alertMessage = 'Employee updated!';
           this.alertMessageType = 0;
           this.showMessage = true;
         })
         .catch(error => {
           console.log(error);
-          this.alertMessage = 'Employee type cannot be updated!';
+          this.alertMessage = 'Employee cannot be updated!';
           this.alertMessageType = 1;
           this.showMessage = true;
           this.getData();

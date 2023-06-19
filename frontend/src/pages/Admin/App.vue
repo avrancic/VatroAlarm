@@ -29,6 +29,9 @@
             <li>
                 <RouterLink :to="{ name: 'AdminSettingsIncidentsTypes' }">Incidents types list</RouterLink>
             </li>
+            <li>
+                <RouterLink :to="{ name: 'AdminSettingsUsers' }">Users</RouterLink>
+            </li>
         </ul>
     </nav>
 

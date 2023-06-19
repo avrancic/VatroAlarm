@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import AdminIncidentsPage from '../views/Admin/IncidentsPage.vue'
+import AdminIncidentsPage from './views/IncidentsPage.vue'
 
-import AdminVehiclesPage from '../views/Admin/Settings/VehiclesPage.vue'
-import AdminEmployeesPage from '../views/Admin/Settings/EmployeesPage.vue'
-import AdminEmployeesTypesPage from '../views/Admin/Settings/EmployeesTypesPage.vue'
-import AdminIncidentsTypesPage from '../views/Admin/Settings/IncidentsTypesPage.vue'
+import AdminVehiclesPage from './views/Settings/VehiclesPage.vue'
+import AdminEmployeesPage from './views/Settings/EmployeesPage.vue'
+import AdminEmployeesTypesPage from './views/Settings/EmployeesTypesPage.vue'
+import AdminIncidentsTypesPage from './views/Settings/IncidentsTypesPage.vue'
+import AdminUsersPage from './views/Settings/UsersPage.vue'
 
 const routes = [
   {
@@ -32,6 +33,11 @@ const routes = [
     path: '/admin/settings/employees_types',
     name: 'AdminSettingsEmployeesTypes',
     component: AdminEmployeesTypesPage
+  },
+  {
+    path: '/admin/users',
+    name: 'AdminSettingsUsers',
+    component: AdminUsersPage
   }
 ]
 

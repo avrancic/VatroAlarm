@@ -8,5 +8,5 @@ module.exports = app => {
   router.put("/:id", controller.update);
   router.delete("/:id", controller.delete);
 
-  app.use('/api/employees_types', router);
+  app.use('/api/incidents_types', router);
 };  

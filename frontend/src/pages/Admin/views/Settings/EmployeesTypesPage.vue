@@ -12,17 +12,15 @@
         <table class="table table-hover">
           <thead>
             <tr>
+              <th scope="col">Id</th>
               <th scope="col">Name</th>
-              <th scope="col">Surname</th>
-              <th scope="col">Type</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in items" :key="index">
+              <td>{{ item.id }}</td>
               <td>{{ item.name }}</td>
-              <td>{{ item.surname }}</td>
-              <td>{{ item.type }}</td>
               <td class="text-end">
                 <div class="btn-group mt-2" role="group">
                   <button type="button" class="btn btn-warning btn-sm" @click="toggleEditModal(item)">Update</button>
@@ -41,7 +39,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Add a new employee</h5>
+            <h5 class="modal-title">Add a new employee type</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="toggleAddModal">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -49,21 +47,8 @@
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label for="addName" class="form-label">Name:</label>
+                <label for="addName" class="form-label">Type:</label>
                 <input type="text" class="form-control" id="addName" v-model="addForm.name" placeholder="Enter name">
-              </div>
-              <div class="mb-3">
-                <label for="addSurname" class="form-label">Surname:</label>
-                <input type="text" class="form-control" id="addSurname" v-model="addForm.surname"
-                  placeholder="Enter surname">
-              </div>
-              <div class="mb-3">
-                <label for="addType" class="form-label">Number:</label>
-                <select class="form-control" id="addType" v-model="selected">
-                  <option v-for="option in types" :key="option.id">
-                    {{ option.type}}
-                  </option>
-                </select>
               </div>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary btn-sm" @click="handleAddSubmit">Submit</button>
@@ -90,17 +75,8 @@
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label for="editName" class="form-label">Name:</label>
-                <input type="text" class="form-control" id="editName" v-model="editForm.name" placeholder="Enter name">
-              </div>
-              <div class="mb-3">
-                <label for="editSurname" class="form-label">Surname:</label>
-                <input type="text" class="form-control" id="editSurname" v-model="editForm.surname"
-                  placeholder="Enter surname">
-              </div>
-              <div class="mb-3">
-                <label for="editType" class="form-label">Type</label>
-                <input type="text" class="form-control" id="editType" v-model="editForm.type" placeholder="Enter type">
+                <label for="editName" class="form-label">Type:</label>
+                <input type="text" class="form-control" id="editName" v-model="editForm.name" placeholder="Enter type">
               </div>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary btn-sm" @click="handleEditSubmit">Submit</button>
@@ -117,8 +93,7 @@
 
 <script>
 import MessageAlert from '@/components/AdminMessage.vue';
-import EmployeesDataService from "../../../services/Admin/Settings/EmployeesDataService";
-import EmployeesTypesDataService from "../../../services/Admin/Settings/EmployeesTypesDataService";
+import EmployeesTypesDataService from "@/services/Admin/Settings/EmployeesTypesDataService";
 
 export default {
   data() {
@@ -126,16 +101,12 @@ export default {
       activeAddModal: false,
       activeEditModal: false,
       addForm: {
-        name: '',
-        surname: '',
-        type: ''
+        name: ''
       },
       items: [],
       editForm: {
         id: '',
         name: '',
-        surname: '',
-        type: ''
       },
       alertMessage: '',
       alertMessageType: 1,
@@ -149,23 +120,23 @@ export default {
   },
   methods: {
     addItem(payload) {
-      EmployeesDataService.create(payload)
+      EmployeesTypesDataService.create(payload)
         .then(() => {
           this.getData();
-          this.alertMessage = 'Employee added!';
+          this.alertMessage = 'Employee type added!';
           this.alertMessageType = 0;
           this.showMessage = true;
         })
         .catch(error => {
           console.log(error);
-          this.alertMessage = 'Employee cannot be added!';
+          this.alertMessage = 'Employee type cannot be added!';
           this.alertMessageType = 1;
           this.showMessage = true;
           this.getData();
         });
     },
     getData() {
-      EmployeesDataService.getAll()
+      EmployeesTypesDataService.getAll()
         .then(response => {
           this.items = response.data;
           console.log(response.data);
@@ -188,7 +159,7 @@ export default {
     handleEditCancel() {
       this.toggleEditModal(null);
       this.initForm();
-      this.getData(); // why?
+      this.getData();
     },
     handleEditSubmit() {
       this.toggleEditModal(null);
@@ -204,7 +175,7 @@ export default {
       this.editForm.type = [];
     },
     removeItem(itemID) {
-      EmployeesDataService.delete(itemID)
+      EmployeesTypesDataService.delete(itemID)
         .then(() => {
           this.getData();
           this.alertMessage = 'Employee removed!';
@@ -213,7 +184,7 @@ export default {
         })
         .catch(error => {
           console.log(error);
-          this.alertMessage = 'Employee cannot be removed!';
+          this.alertMessage = 'Employee type cannot be removed!';
           this.alertMessageType = 1;
           this.showMessage = true;
           this.getData();
@@ -241,34 +212,23 @@ export default {
       }
     },
     updateItem(payload, itemID) {
-      EmployeesDataService.update(itemID, payload)
+      EmployeesTypesDataService.update(itemID, payload)
         .then(() => {
           this.getData();
-          this.alertMessage = 'Employee updated!';
+          this.alertMessage = 'Employee type updated!';
           this.alertMessageType = 0;
           this.showMessage = true;
         })
         .catch(error => {
           console.log(error);
-          this.alertMessage = 'Employee cannot be updated!';
+          this.alertMessage = 'Employee type cannot be updated!';
           this.alertMessageType = 1;
           this.showMessage = true;
           this.getData();
         });
     },
-    loadEmployeesTypes() {
-      EmployeesTypesDataService.getAll()
-        .then(response => {
-          this.types = response.data;
-          console.log(response.data);
-        })
-        .catch(e => {
-          console.log(e);
-        });
-    },
   },
   created() {
-    this.loadEmployeesTypes();
     this.getData();
   },
 };

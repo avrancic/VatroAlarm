@@ -41,7 +41,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Add a new incident type</h5>
+            <h5 class="modal-title">Add a new employee</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="toggleAddModal">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -59,9 +59,9 @@
               </div>
               <div class="mb-3">
                 <label for="addType" class="form-label">Number:</label>
-                <select class="form-control" id="addType" v-model="selected">
+                <select class="form-control" id="addType" v-model="addForm.type">
                   <option v-for="option in types" :key="option.id">
-                    {{ option.type}}
+                    {{ option.name}}
                   </option>
                 </select>
               </div>
@@ -100,7 +100,11 @@
               </div>
               <div class="mb-3">
                 <label for="editType" class="form-label">Type</label>
-                <input type="text" class="form-control" id="editType" v-model="editForm.type" placeholder="Enter type">
+                <select class="form-control" id="addType" v-model="editForm.type">
+                  <option v-for="option in types" :key="option.id">
+                    {{ option.name}}
+                  </option>
+                </select>
               </div>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary btn-sm" @click="handleEditSubmit">Submit</button>
@@ -117,8 +121,8 @@
 
 <script>
 import MessageAlert from '@/components/AdminMessage.vue';
-import EmployeesDataService from "../../../services/Admin/Settings/EmployeesDataService";
-import EmployeesTypesDataService from "../../../services/Admin/Settings/EmployeesTypesDataService";
+import EmployeesDataService from "@/services/Admin/Settings/EmployeesDataService";
+import EmployeesTypesDataService from "@/services/Admin/Settings/EmployeesTypesDataService";
 
 export default {
   data() {
@@ -197,11 +201,11 @@ export default {
     initForm() {
       this.addForm.name = '';
       this.addForm.surname = '';
-      this.addForm.type = [];
+      this.addForm.type = '';
       this.editForm.id = '';
       this.editForm.name = '';
       this.editForm.surname = '';
-      this.editForm.type = [];
+      this.editForm.type = '';
     },
     removeItem(itemID) {
       EmployeesDataService.delete(itemID)

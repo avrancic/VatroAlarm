@@ -2,27 +2,27 @@
   <div class="container">
     <div class="row">
       <div class="col-sm-10">
-        <h1>Vehicles</h1>
+        <h1>Accounts</h1>
         <hr><br><br>
         <alert :message=alertMessage :type=alertMessageType v-if="showMessage"></alert>
         <button type="button" class="btn btn-success btn-sm" @click="toggleAddModal">
-          Add vehicle
+          Add employee
         </button>
         <br><br>
         <table class="table table-hover">
           <thead>
             <tr>
-              <th scope="col">Plate</th>
-              <th scope="col">Model</th>
-              <th scope="col">Number</th>
+              <th scope="col">Name</th>
+              <th scope="col">Username</th>
+              <th scope="col">Permissions</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in items" :key="index">
-              <td>{{ item.plate }}</td>
-              <td>{{ item.model }}</td>
-              <td>{{ item.number }}</td>
+              <td>{{ item.name }}</td>
+              <td>{{ item.username }}</td>
+              <td>{{ item.permisisons }}</td>
               <td class="text-end">
                 <div class="btn-group mt-2" role="group">
                   <button type="button" class="btn btn-warning btn-sm" @click="toggleEditModal(item)">Update</button>
@@ -41,7 +41,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Add a new vehicle</h5>
+            <h5 class="modal-title">Add a new user</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="toggleAddModal">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -49,17 +49,26 @@
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label for="addPlate" class="form-label">Plate:</label>
-                <input type="text" class="form-control" id="addPlate" v-model="addForm.plate" placeholder="Enter plate">
+                <label for="addName" class="form-label">Name:</label>
+                <input type="text" class="form-control" id="addName" v-model="addForm.name" placeholder="Enter name">
               </div>
               <div class="mb-3">
-                <label for="addModel" class="form-label">Model:</label>
-                <input type="text" class="form-control" id="addModel" v-model="addForm.model" placeholder="Enter model">
+                <label for="addSurname" class="form-label">Username:</label>
+                <input type="text" class="form-control" id="addSurname" v-model="addForm.username"
+                  placeholder="Enter USERNAME">
               </div>
               <div class="mb-3">
-                <label for="addNumber" class="form-label">Number:</label>
-                <input type="text" class="form-control" id="addNumber" v-model="addForm.number"
-                  placeholder="Enter number">
+                <label for="addSurname" class="form-label">Password:</label>
+                <input type="text" class="form-control" id="addSurname" v-model="addForm.password"
+                  placeholder="Enter USERNAME">
+              </div>
+              <div class="mb-3">
+                <label for="addSurname" class="form-label">Permisisons:</label>
+                  <select class="form-control" id="addSurname" v-model="addForm.permisisons" multiple>
+                  <option>A</option>
+                  <option>B</option>
+                  <option>C</option>
+                </select>
               </div>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary btn-sm" @click="handleAddSubmit">Submit</button>
@@ -70,6 +79,7 @@
         </div>
       </div>
     </div>
+    
     <div v-if="activeAddModal" class="modal-backdrop fade show"></div>
 
     <!-- edit modal -->
@@ -86,18 +96,17 @@
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label for="editPlate" class="form-label">Plate:</label>
-                <input type="text" class="form-control" id="editPlate" v-model="editForm.plate" placeholder="Enter title">
+                <label for="editName" class="form-label">Name:</label>
+                <input type="text" class="form-control" id="editName" v-model="editForm.name" placeholder="Enter name">
               </div>
               <div class="mb-3">
-                <label for="editModel" class="form-label">Model:</label>
-                <input type="text" class="form-control" id="editModel" v-model="editForm.model"
-                  placeholder="Enter author">
+                <label for="editSurname" class="form-label">Surname:</label>
+                <input type="text" class="form-control" id="editSurname" v-model="editForm.surname"
+                  placeholder="Enter surname">
               </div>
               <div class="mb-3">
-                <label for="editNumber" class="form-label">Number</label>
-                <input type="text" class="form-control" id="editNumber" v-model="editForm.number"
-                  placeholder="Enter author">
+                <label for="editType" class="form-label">Type</label>
+                <input type="text" class="form-control" id="editType" v-model="editForm.type" placeholder="Enter type">
               </div>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary btn-sm" @click="handleEditSubmit">Submit</button>
@@ -114,7 +123,7 @@
 
 <script>
 import MessageAlert from '@/components/AdminMessage.vue';
-import VehiclesDataService from "../../../services/Admin/Settings/VehiclesDataService";
+import UsersDataService from "@/services/Admin/Settings/UsersDataService";
 
 export default {
   data() {
@@ -122,43 +131,45 @@ export default {
       activeAddModal: false,
       activeEditModal: false,
       addForm: {
-        plate: '',
-        model: '',
-        number: ''
+        name: '',
+        username: '',
+        password: '',
+        permisisons: []
       },
       items: [],
       editForm: {
         id: '',
-        plate: '',
-        model: '',
-        number: ''
+        name: '',
+        password: '',
+        permisisons: []
       },
       alertMessage: '',
       alertMessageType: 1,
-      showMessage: false,
+      showMessage: false
     };
   },
   components: {
-    alert: MessageAlert,
+    alert: MessageAlert
   },
   methods: {
     addItem(payload) {
-      VehiclesDataService.create(payload)
+      UsersDataService.create(payload)
         .then(() => {
           this.getData();
-          this.alertMessage = 'Vehicle added!';
+          this.alertMessage = 'Employee added!';
+          this.alertMessageType = 0;
           this.showMessage = true;
         })
         .catch(error => {
           console.log(error);
-          this.alertMessage = 'Vehicle cannot be added!';
+          this.alertMessage = 'Employee cannot be added!';
           this.alertMessageType = 1;
           this.showMessage = true;
           this.getData();
         });
     },
     getData() {
-      VehiclesDataService.getAll()
+      UsersDataService.getAll()
         .then(response => {
           this.items = response.data;
           console.log(response.data);
@@ -188,24 +199,26 @@ export default {
       this.updateItem(this.editForm, this.editForm.id);
     },
     initForm() {
-      this.addForm.plate = '';
-      this.addForm.model = '';
-      this.addForm.number = [];
+      this.addForm.name = '';
+      this.addForm.username = '';
+      this.addForm.password = '';
+      this.addForm.permisisons = [];
       this.editForm.id = '';
-      this.editForm.plate = '';
-      this.editForm.model = '';
-      this.editForm.number = [];
+      this.editForm.name = '';
+      this.editForm.username = '';
+      this.editForm.permisisons = [];
     },
     removeItem(itemID) {
-      VehiclesDataService.delete(itemID)
+      UsersDataService.delete(itemID)
         .then(() => {
           this.getData();
-          this.alertMessage = 'Vehicle removed!';
+          this.alertMessage = 'Employee removed!';
+          this.alertMessageType = 0;
           this.showMessage = true;
         })
         .catch(error => {
           console.log(error);
-          this.alertMessage = 'Vehicle cannot be removed!';
+          this.alertMessage = 'Employee cannot be removed!';
           this.alertMessageType = 1;
           this.showMessage = true;
           this.getData();
@@ -233,20 +246,21 @@ export default {
       }
     },
     updateItem(payload, itemID) {
-      VehiclesDataService.update(itemID, payload)
+      UsersDataService.update(itemID, payload)
         .then(() => {
           this.getData();
-          this.alertMessage = 'Vehicle updated!';
+          this.alertMessage = 'Employee updated!';
+          this.alertMessageType = 0;
           this.showMessage = true;
         })
         .catch(error => {
           console.log(error);
-          this.alertMessage = 'Vehicle cannot be updated!';
+          this.alertMessage = 'Employee cannot be updated!';
           this.alertMessageType = 1;
           this.showMessage = true;
           this.getData();
         });
-    },
+    }
   },
   created() {
     this.getData();
