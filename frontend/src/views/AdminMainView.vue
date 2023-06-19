@@ -68,9 +68,6 @@
 
 <script>
 export default {
-    name: 'App',
-    components: {
-    },
     data: () => ({
         leftNavIsOpen: false
     }),

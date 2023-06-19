@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col-sm-10">
-        <h1>Accounts</h1>
+        <h1>Employees</h1>
         <hr><br><br>
         <alert :message=alertMessage :type=alertMessageType v-if="showMessage"></alert>
         <button type="button" class="btn btn-success btn-sm" @click="toggleAddModal">
@@ -13,16 +13,16 @@
           <thead>
             <tr>
               <th scope="col">Name</th>
-              <th scope="col">Username</th>
-              <th scope="col">Permissions</th>
+              <th scope="col">Surname</th>
+              <th scope="col">Type</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in items" :key="index">
               <td>{{ item.name }}</td>
-              <td>{{ item.username }}</td>
-              <td>{{ item.permisisons }}</td>
+              <td>{{ item.surname }}</td>
+              <td>{{ item.type }}</td>
               <td class="text-end">
                 <div class="btn-group mt-2" role="group">
                   <button type="button" class="btn btn-warning btn-sm" @click="toggleEditModal(item)">Update</button>
@@ -41,7 +41,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Add a new user</h5>
+            <h5 class="modal-title">Add a new employee</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="toggleAddModal">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -53,21 +53,16 @@
                 <input type="text" class="form-control" id="addName" v-model="addForm.name" placeholder="Enter name">
               </div>
               <div class="mb-3">
-                <label for="addSurname" class="form-label">Username:</label>
-                <input type="text" class="form-control" id="addSurname" v-model="addForm.username"
-                  placeholder="Enter USERNAME">
+                <label for="addSurname" class="form-label">Surname:</label>
+                <input type="text" class="form-control" id="addSurname" v-model="addForm.surname"
+                  placeholder="Enter surname">
               </div>
               <div class="mb-3">
-                <label for="addSurname" class="form-label">Password:</label>
-                <input type="text" class="form-control" id="addSurname" v-model="addForm.password"
-                  placeholder="Enter USERNAME">
-              </div>
-              <div class="mb-3">
-                <label for="addSurname" class="form-label">Permisisons:</label>
-                  <select class="form-control" id="addSurname" v-model="addForm.permisisons" multiple>
-                  <option>A</option>
-                  <option>B</option>
-                  <option>C</option>
+                <label for="addType" class="form-label">Number:</label>
+                <select class="form-control" id="addType" v-model="addForm.type">
+                  <option v-for="option in types" :key="option.id">
+                    {{ option.name }}
+                  </option>
                 </select>
               </div>
               <div class="btn-group" role="group">
@@ -79,7 +74,6 @@
         </div>
       </div>
     </div>
-    
     <div v-if="activeAddModal" class="modal-backdrop fade show"></div>
 
     <!-- edit modal -->
@@ -106,7 +100,11 @@
               </div>
               <div class="mb-3">
                 <label for="editType" class="form-label">Type</label>
-                <input type="text" class="form-control" id="editType" v-model="editForm.type" placeholder="Enter type">
+                <select class="form-control" id="addType" v-model="editForm.type">
+                  <option v-for="option in types" :key="option.id">
+                    {{ option.name }}
+                  </option>
+                </select>
               </div>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary btn-sm" @click="handleEditSubmit">Submit</button>
@@ -123,7 +121,8 @@
 
 <script>
 import MessageAlert from '@/components/AdminMessage.vue';
-import UsersDataService from "@/services/Admin/Settings/UsersDataService";
+import EmployeesDataService from "@/services/Admin/Settings/EmployeesDataService";
+import EmployeesTypesDataService from "@/services/Admin/Settings/EmployeesTypesDataService";
 
 export default {
   data() {
@@ -132,20 +131,21 @@ export default {
       activeEditModal: false,
       addForm: {
         name: '',
-        username: '',
-        password: '',
-        permisisons: []
+        surname: '',
+        type: ''
       },
       items: [],
       editForm: {
         id: '',
         name: '',
-        password: '',
-        permisisons: []
+        surname: '',
+        type: ''
       },
       alertMessage: '',
       alertMessageType: 1,
-      showMessage: false
+      showMessage: false,
+      types: [
+      ]
     };
   },
   components: {
@@ -153,7 +153,7 @@ export default {
   },
   methods: {
     addItem(payload) {
-      UsersDataService.create(payload)
+      EmployeesDataService.create(payload)
         .then(() => {
           this.getData();
           this.alertMessage = 'Employee added!';
@@ -169,7 +169,7 @@ export default {
         });
     },
     getData() {
-      UsersDataService.getAll()
+      EmployeesDataService.getAll()
         .then(response => {
           this.items = response.data;
           console.log(response.data);
@@ -200,16 +200,15 @@ export default {
     },
     initForm() {
       this.addForm.name = '';
-      this.addForm.username = '';
-      this.addForm.password = '';
-      this.addForm.permisisons = [];
+      this.addForm.surname = '';
+      this.addForm.type = '';
       this.editForm.id = '';
       this.editForm.name = '';
-      this.editForm.username = '';
-      this.editForm.permisisons = [];
+      this.editForm.surname = '';
+      this.editForm.type = '';
     },
     removeItem(itemID) {
-      UsersDataService.delete(itemID)
+      EmployeesDataService.delete(itemID)
         .then(() => {
           this.getData();
           this.alertMessage = 'Employee removed!';
@@ -246,7 +245,7 @@ export default {
       }
     },
     updateItem(payload, itemID) {
-      UsersDataService.update(itemID, payload)
+      EmployeesDataService.update(itemID, payload)
         .then(() => {
           this.getData();
           this.alertMessage = 'Employee updated!';
@@ -260,9 +259,20 @@ export default {
           this.showMessage = true;
           this.getData();
         });
-    }
+    },
+    loadEmployeesTypes() {
+      EmployeesTypesDataService.getAll()
+        .then(response => {
+          this.types = response.data;
+          console.log(response.data);
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
   },
   created() {
+    this.loadEmployeesTypes();
     this.getData();
   },
 };

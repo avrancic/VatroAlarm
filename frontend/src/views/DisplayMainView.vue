@@ -11,6 +11,7 @@
       </div>
     </div>
   </nav>
+  
   <div class="container-fluid">
     <div class="main-content">
       <carousel :key="slide" :transition="1500" :wrapAround="true">
