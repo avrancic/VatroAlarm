@@ -72,7 +72,8 @@ exports.login = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-  db.user.find({}, "name username permissions")
+  db.user.find({}, "name username")
+    .populate('role')
     .then(data => {
       res.send(data);
     })

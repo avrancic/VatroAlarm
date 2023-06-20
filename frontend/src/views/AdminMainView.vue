@@ -1,72 +1,64 @@
 <template>
-      <div class="admin">
+    <div class="admin">
 
-    <nav id="sidebar" v-bind:class="(leftNavIsOpen) ? 'active' : ''">
-        <div class="sidebar-header">
-            <h1>VatroAlarm</h1>
-        </div>
-        <ul class="text-secondary">
-            <li>
-                <RouterLink :to="{ name: 'AdminIncidents' }">Incidents</RouterLink>
-            </li>
-        </ul>
-
-        <hr class="navbar-divider my-5 opacity-20">
-
-        <ul class="text-secondary">
-            <li>
-                <span class="nav-link text-xs font-semibold text-uppercase text-muted ls-wide" href="#">
-                    Settings
-                </span>
-            </li>
-            <li>
-                <RouterLink :to="{ name: 'AdminSettingsVehicles' }">Vehicles list</RouterLink>
-            </li>
-            <li>
-                <RouterLink :to="{ name: 'AdminSettingsEmployees' }">Employees list</RouterLink>
-            </li>
-            <li>
-                <RouterLink :to="{ name: 'AdminSettingsEmployeesTypes' }">Employees types list</RouterLink>
-            </li>
-            <li>
-                <RouterLink :to="{ name: 'AdminSettingsIncidentsTypes' }">Incidents types list</RouterLink>
-            </li>
-            <li>
-                <RouterLink :to="{ name: 'AdminSettingsUsers' }">Users</RouterLink>
-            </li>
-        </ul>
-    </nav>
-
-    <div id="body">
-        <nav class="navbar navbar-expand-lg navbar-white bg-white">
-            <button type="button" id="sidebarCollapse" class="btn btn-light" @click="leftNavIsOpen = !leftNavIsOpen">| |
-                |</button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="nav navbar-nav ms-auto">
-                    <li class="nav-item dropdown">
-                        <div class="nav-dropdown">
-                            <a href="#" id="nav2" class="nav-item nav-link dropdown-toggle text-secondary"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <span>Arian test</span>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end nav-link-menu">
-                                <ul class="nav-list">
-                                    <li><a href="" class="dropdown-item">test</a></li>
-                                    <div class="dropdown-divider"></div>
-                                    <li><a href="" class="dropdown-item">Logout</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
+        <nav id="sidebar" v-bind:class="(leftNavIsOpen) ? 'active' : ''">
+            <div class="sidebar-header">
+                <h1>VatroAlarm</h1>
             </div>
+            <ul class="text-secondary">
+                <li>
+                    <RouterLink :to="{ name: 'AdminIncidents' }">Incidents</RouterLink>
+                </li>
+            </ul>
+
+            <hr class="navbar-divider my-5 opacity-20">
+
+            <ul class="text-secondary">
+                <li>
+                    <span class="nav-link text-xs font-semibold text-uppercase text-muted ls-wide" href="#">
+                        Settings
+                    </span>
+                </li>
+                <li>
+                    <RouterLink :to="{ name: 'AdminSettingsVehicles' }">Vehicles list</RouterLink>
+                </li>
+                <li>
+                    <RouterLink :to="{ name: 'AdminSettingsEmployees' }">Employees list</RouterLink>
+                </li>
+                <li>
+                    <RouterLink :to="{ name: 'AdminSettingsUsers' }">Users</RouterLink>
+                </li>
+            </ul>
         </nav>
 
-        <div class="content">
-            <router-view />
+        <div id="body">
+            <nav class="navbar navbar-expand-lg navbar-white bg-white">
+                <button type="button" id="sidebarCollapse" class="btn btn-light" @click="leftNavIsOpen = !leftNavIsOpen">| |
+                    |</button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="nav navbar-nav ms-auto">
+                        <li class="nav-item dropdown">
+                            <div class="nav-dropdown">
+                                <a href="#" id="nav2" class="nav-item nav-link dropdown-toggle text-secondary"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span>{{ (currentUser != null) ? currentUser.name : "" }}</span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end nav-link-menu">
+                                    <ul class="nav-list">
+                                        <li><a href="" class="dropdown-item" @click.prevent="logOut">Logout</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="content">
+                <router-view />
+            </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -74,9 +66,19 @@ export default {
     data: () => ({
         leftNavIsOpen: false
     }),
-} 
+    computed: {
+        currentUser() {
+            return this.$store.state.auth.user;
+        }
+    },
+    methods: {
+        logOut() {
+            this.$store.dispatch('auth/logout');
+            this.$router.push('/login');
+        }
+    }
+};
 </script>
-
 
 <style scoped>
 #app .admin {
@@ -86,6 +88,7 @@ export default {
     align-items: stretch;
     overflow-x: hidden
 }
+
 body {
     width: 100%;
     height: 100%;

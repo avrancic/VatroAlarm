@@ -9,29 +9,17 @@
           Add employee
         </button>
         <br><br>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Surname</th>
-              <th scope="col">Type</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, index) in items" :key="index">
-              <td>{{ item.name }}</td>
-              <td>{{ item.surname }}</td>
-              <td>{{ item.type }}</td>
-              <td class="text-end">
-                <div class="btn-group mt-2" role="group">
-                  <button type="button" class="btn btn-warning btn-sm" @click="toggleEditModal(item)">Update</button>
-                  <button type="button" class="btn btn-danger btn-sm" @click="handleDeleteItem(item)">Delete</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <vue-good-table :rows="rows" :columns="columns">
+          <template #table-row="props">
+            <span v-if="props.column.field == 'after'">
+              <button type="button" class="btn btn-warning btn-sm" @click="toggleEditModal(props.row)">Update</button>
+              <button type="button" class="btn btn-danger btn-sm" @click="handleDeleteItem(props.row)">Delete</button>
+            </span>
+            <span v-else>
+              {{ props.formattedRow[props.column.field] }}
+            </span>
+          </template>
+        </vue-good-table>
       </div>
     </div>
 
@@ -58,11 +46,10 @@
                   placeholder="Enter surname">
               </div>
               <div class="mb-3">
-                <label for="addType" class="form-label">Number:</label>
+                <label for="addType" class="form-label">Type:</label>
                 <select class="form-control" id="addType" v-model="addForm.type">
-                  <option v-for="option in types" :key="option.id">
-                    {{ option.name }}
-                  </option>
+                    <option>Vozač</option>
+                    <option>Vatrogasac</option>
                 </select>
               </div>
               <div class="btn-group" role="group">
@@ -122,11 +109,27 @@
 <script>
 import MessageAlert from '@/components/AdminMessage.vue';
 import EmployeesDataService from "@/services/AdminSettingsEmployeesDataService";
-import EmployeesTypesDataService from "@/services/AdminSettingsEmployeesTypesDataService";
 
 export default {
   data() {
     return {
+      columns: [
+        {
+          label: 'Name',
+          field: 'name'
+        },
+        {
+          label: 'Surname',
+          field: 'surname'
+        },
+        {
+          label: 'Type',
+          field: 'type.name',
+        },
+        {
+          field: 'after',
+        },
+      ],
       activeAddModal: false,
       activeEditModal: false,
       addForm: {
@@ -134,7 +137,7 @@ export default {
         surname: '',
         type: ''
       },
-      items: [],
+      rows: [],
       editForm: {
         id: '',
         name: '',
@@ -171,7 +174,7 @@ export default {
     getData() {
       EmployeesDataService.getAll()
         .then(response => {
-          this.items = response.data;
+          this.rows = response.data;
           console.log(response.data);
         })
         .catch(e => {
@@ -187,7 +190,7 @@ export default {
       this.initForm();
     },
     handleDeleteItem(item) {
-      this.removeItem(item.id);
+      this.removeItem(item._id);
     },
     handleEditCancel() {
       this.toggleEditModal(null);
@@ -260,7 +263,7 @@ export default {
           this.getData();
         });
     },
-    loadEmployeesTypes() {
+    /*loadEmployeesTypes() {
       EmployeesTypesDataService.getAll()
         .then(response => {
           this.types = response.data;
@@ -269,10 +272,9 @@ export default {
         .catch(e => {
           console.log(e);
         });
-    },
+    },*/
   },
   created() {
-    this.loadEmployeesTypes();
     this.getData();
   },
 };

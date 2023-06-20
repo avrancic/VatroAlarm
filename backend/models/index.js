@@ -9,6 +9,7 @@ db.url = dbConfig.url;
 
 db.user = require("./user.model")(mongoose);
 db.vehicle = require("./vehicle.model")(mongoose);
+db.vehicle_Type = require("./vehicle_type.model")(mongoose);
 
 db.incident = require("./incident.model")(mongoose);
 db.incident_type = require("./incident_type.model")(mongoose);

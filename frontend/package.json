@@ -16,6 +16,7 @@
     "save": "^2.9.0",
     "vee-validate": "^4.9.6",
     "vue": "^3.3.4",
+    "vue-good-table-next": "^0.2.1",
     "vue-router": "^4.0.3",
     "vue3-carousel": "^0.3.1",
     "vue3-openlayers": "^0.5.1",

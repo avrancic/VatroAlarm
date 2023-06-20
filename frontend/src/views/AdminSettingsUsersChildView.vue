@@ -6,32 +6,20 @@
         <hr><br><br>
         <alert :message=alertMessage :type=alertMessageType v-if="showMessage"></alert>
         <button type="button" class="btn btn-success btn-sm" @click="toggleAddModal">
-          Add employee
+          Add user
         </button>
         <br><br>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Username</th>
-              <th scope="col">Permissions</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, index) in items" :key="index">
-              <td>{{ item.name }}</td>
-              <td>{{ item.username }}</td>
-              <td>{{ item.permisisons }}</td>
-              <td class="text-end">
-                <div class="btn-group mt-2" role="group">
-                  <button type="button" class="btn btn-warning btn-sm" @click="toggleEditModal(item)">Update</button>
-                  <button type="button" class="btn btn-danger btn-sm" @click="handleDeleteItem(item)">Delete</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <vue-good-table :rows="rows" :columns="columns">
+          <template #table-row="props">
+            <span v-if="props.column.field == 'after'">
+              <button type="button" class="btn btn-warning btn-sm" @click="toggleEditModal(props.row)">Update</button>
+              <button type="button" class="btn btn-danger btn-sm" @click="handleDeleteItem(props.row)">Delete</button>
+            </span>
+            <span v-else>
+              {{ props.formattedRow[props.column.field] }}
+            </span>
+          </template>
+        </vue-good-table>
       </div>
     </div>
 
@@ -53,18 +41,18 @@
                 <input type="text" class="form-control" id="addName" v-model="addForm.name" placeholder="Enter name">
               </div>
               <div class="mb-3">
-                <label for="addSurname" class="form-label">Username:</label>
-                <input type="text" class="form-control" id="addSurname" v-model="addForm.username"
-                  placeholder="Enter USERNAME">
+                <label for="addUsername" class="form-label">Username:</label>
+                <input type="text" class="form-control" id="addUsername" v-model="addForm.username"
+                  placeholder="Enter username">
               </div>
               <div class="mb-3">
-                <label for="addSurname" class="form-label">Password:</label>
-                <input type="text" class="form-control" id="addSurname" v-model="addForm.password"
-                  placeholder="Enter USERNAME">
+                <label for="addPassword" class="form-label">Password:</label>
+                <input type="text" class="form-control" id="addPassword" v-model="addForm.password"
+                  placeholder="Enter password">
               </div>
               <div class="mb-3">
-                <label for="addSurname" class="form-label">Role:</label>
-                <select class="form-control" id="addSurname" v-model="addForm.role">
+                <label for="addRole" class="form-label">Role:</label>
+                <select class="form-control" id="addRole" v-model="addForm.role">
                   <option>admin</option>
                   <option>user</option>
                 </select>
@@ -127,6 +115,23 @@ import UsersDataService from "@/services/AdminSettingsUsersDataService";
 export default {
   data() {
     return {
+        columns: [
+        {
+          label: 'Name',
+          field: 'name'
+        },
+        {
+          label: 'Username',
+          field: 'username'
+        },
+        {
+          label: 'Role',
+          field: 'role.name',
+        },
+        {
+          field: 'after',
+        },
+      ],
       activeAddModal: false,
       activeEditModal: false,
       addForm: {
@@ -135,7 +140,7 @@ export default {
         password: '',
         role: ''
       },
-      items: [],
+      rows: [],
       editForm: {
         id: '',
         name: '',
@@ -170,7 +175,7 @@ export default {
     getData() {
       UsersDataService.getAll()
         .then(response => {
-          this.items = response.data;
+          this.rows = response.data;
           console.log(response.data);
         })
         .catch(e => {
@@ -186,7 +191,7 @@ export default {
       this.initForm();
     },
     handleDeleteItem(item) {
-      this.removeItem(item.id);
+      this.removeItem(item._id);
     },
     handleEditCancel() {
       this.toggleEditModal(null);

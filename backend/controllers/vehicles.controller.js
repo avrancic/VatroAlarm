@@ -13,28 +13,38 @@ exports.create = (req, res) => {
     res.status(400).send({ message: "Model can not be empty!" });
     return;
   }
+  if (!req.body.type) {
+    res.status(400).send({ message: "Type can not be empty!" });
+    return;
+  }
 
-  db.vehicle({
-    number: req.body.number,
-    plate: req.body.plate,
-    model: req.body.model
-  }).save()
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the vehicle."
-      });
-    });    
+  db.vehicle_Type.findOne({ name: req.body.type })
+  .then(item => {
+    new db.vehicle({
+      number: req.body.number,
+      plate: req.body.plate,
+      model: req.body.model,
+      type: item._id
+    }).save()
+      .then(() => {
+        return res.status(200).send({ message: "Created!" });
+      })
+      .catch(err => {
+        return res.status(500).send({ message: "Cannot be createed!" });
+      })
+  })
+  .catch(err => {
+    return res.status(500).send({ message: "Cannot be createed!" });
+  }) 
 };
 
 exports.findAll = (req, res) => {
   const plate = req.query.plate;
+
   var condition = plate ? { plate: { $regex: new RegExp(plate), $options: "i" } } : {};
 
   db.vehicle.find(condition)
+    .populate('type')
     .then(data => {
       res.send(data);
     })
@@ -43,22 +53,6 @@ exports.findAll = (req, res) => {
         message:
           err.message || "Some error occurred while retrieving vehicles."
       });
-    });
-};
-
-exports.findOne = (req, res) => {
-  const id = req.params.id;
-
-  db.vehicle.findById(id)
-    .then(data => {
-      if (!data)
-        res.status(404).send({ message: "Not found vehicle with id " + id });
-      else res.send(data);
-    })
-    .catch(err => {
-      res
-        .status(500)
-        .send({ message: "Error retrieving vehicle with id=" + id });
     });
 };
 
@@ -106,19 +100,4 @@ exports.delete = (req, res) => {
         message: "Could not delete vehicle with id=" + id
       });
     });
-};
-
-exports.deleteAll = (req, res) => {
-  db.vehicle.deleteMany({})
-  .then(data => {
-    res.send({
-      message: `${data.deletedCount} Vehicles were deleted successfully!`
-    });
-  })
-  .catch(err => {
-    res.status(500).send({
-      message:
-        err.message || "Some error occurred while removing all vehicles."
-    });
-  });
 };

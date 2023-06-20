@@ -73,29 +73,42 @@ function initial() {
       console.log("Error", err);
     });
 
-  db.employee_type.estimatedDocumentCount()
+    db.employee_type.estimatedDocumentCount()
     .then((count) => {
       if (count === 0) {
-        new db.employee_type({
-          name: "test"
-        }).save()
-          .then(() => {
-            console.log("added 'test1' to employee types collection");
-          });
+        db.employee_type.insertMany(
+          [
+            { name: "Vozač" },
+            { name: "Vatrogasac" },
+          ]
+       )
+       .then(() => {
+        console.log("added 'test1' to employee types collection");
+      });
+      }
+    })
+    .catch(err => {
+      console.log("Error", err);
+    });
 
-        new db.employee_type({
-          name: "test2"
-        }).save()
-          .then(() => {
-            console.log("added 'test2' to employee types collection");
-          });
-
-        new db.employee_type({
-          name: "test3"
-        }).save()
-          .then(() => {
-            console.log("added 'test3' to employee types collection");
-          });
+    db.vehicle_Type.estimatedDocumentCount()
+    .then((count) => {
+      if (count === 0) {
+        db.vehicle_Type.insertMany(
+          [
+            { name: "Navalno vozilo" },
+            { name: "Autocisterna" },
+            { name: "Šumsko vozilo" },
+            { name: "Tehničko vozilo" },
+            { name: "Kombi za putnike" },
+            { name: "Zapovjedno vozilo" },
+            { name: "Autoljestve" },
+            { name: "Teretni kombi" }
+          ]
+       )
+       .then(() => {
+        console.log("added 'test1' to employee types collection");
+      });
       }
     })
     .catch(err => {

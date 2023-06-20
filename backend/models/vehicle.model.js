@@ -15,15 +15,13 @@ module.exports = mongoose => {
           type: String,
           minlength: 1,
           required: true
+      },
+      type: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "VehicleType"
       }
     }
   );
-
-  schema.method("toJSON", function() {
-    const { __v, _id, ...object } = this.toObject();
-    object.id = _id;
-    return object;
-  });
 
   return mongoose.model("vehicle", schema);
 };

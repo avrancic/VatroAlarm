@@ -13,26 +13,30 @@ exports.create = (req, res) => {
     res.status(400).send({ message: "Type can not be empty!" });
     return;
   }
-
-  db.employee({
-    name: req.body.name,
-    surname: req.body.surname,
-    type: req.body.type
-  }).save()
-    .then(data => {
-      res.send({ message: "Employee created!" });
+  
+    db.employee_type.findOne({ name: req.body.type })
+    .then(item => {
+      new db.employee({
+        name: req.body.name,
+        surname: req.body.surname,
+        type: item._id
+      }).save()
+        .then(() => {
+          return res.status(200).send({ message: "Created!" });
+        })
+        .catch(err => {
+          return res.status(500).send({ message: "Cannot be createed!" });
+        })
     })
     .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the item."
-      });
-    });    
+      return res.status(500).send({ message: "Cannot be createed!" });
+    }) 
 };
 
 exports.findAll = (req, res) => {
   db.employee.find()
-    .then(data => {
+  .populate('type')
+  .then(data => {
       res.send(data);
     })
     .catch(err => {
@@ -40,22 +44,6 @@ exports.findAll = (req, res) => {
         message:
           err.message || "Some error occurred while retrieving items."
       });
-    });
-};
-
-exports.findOne = (req, res) => {
-  const id = req.params.id;
-
-  db.employee.findById(id)
-    .then(data => {
-      if (!data)
-        res.status(404).send({ message: "Not found item with id " + id });
-      else res.send(data);
-    })
-    .catch(err => {
-      res
-        .status(500)
-        .send({ message: "Error retrieving item with id=" + id });
     });
 };
 
@@ -103,19 +91,4 @@ exports.delete = (req, res) => {
         message: "Could not delete item with id=" + id
       });
     });
-};
-
-exports.deleteAll = (req, res) => {
-  db.employee.deleteMany({})
-  .then(data => {
-    res.send({
-      message: `${data.deletedCount} Item were deleted successfully!`
-    });
-  })
-  .catch(err => {
-    res.status(500).send({
-      message:
-        err.message || "Some error occurred while removing all items."
-    });
-  });
 };

@@ -10,9 +10,8 @@ module.exports = mongoose => {
         required: true
       },
       type: {
-          type: String,
-          minlength: 1,
-          required: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "EmployeeType"
       },
       description: {
         type: String,
@@ -51,12 +50,6 @@ module.exports = mongoose => {
       }
     }
   );
-
-  schema.method("toJSON", function() {
-    const { __v, _id, ...object } = this.toObject();
-    object.id = _id;
-    return object;
-  });
 
   return mongoose.model("incident", schema);
   };
