@@ -43,7 +43,7 @@ require("./routes/incidents.route")(app);
 require("./routes/employees.route")(app);
 require("./routes/display.route")(app);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 80;
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
