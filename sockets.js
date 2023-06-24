@@ -1,4 +1,6 @@
 module.exports = server => {
+    const db = require("./models");
+
     var corsOptions = {
         origin: "http://localhost:8080"
     };
