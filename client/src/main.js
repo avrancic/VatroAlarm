@@ -1,7 +1,7 @@
 import 'vue-good-table-next/dist/vue-good-table-next.css'
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap"
-import 'vue-multiselect/dist/vue-multiselect.min.css'
+import 'vue-multiselect/dist/vue-multiselect.css'
 
 import { createApp } from 'vue'
 import App from './App.vue'
