@@ -7,3 +7,5 @@ node_modules/
 *.ntvs*
 *.njsproj
 *.sln
+
+config/db.config.js

@@ -1,3 +1,3 @@
 module.exports = {
-    url: "mongodb://localhost:27017/vatroalarm_db"
+    url: "mongodb+srv://avrancic:pVOdOWPUV8QkIE00@cluster0.r07sjwu.mongodb.net/vatroalarm_db?retryWrites=true&w=majority"
 };  

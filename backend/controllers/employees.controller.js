@@ -13,8 +13,8 @@ exports.create = (req, res) => {
     res.status(400).send({ message: "Type can not be empty!" });
     return;
   }
-  
-    db.employee_type.findOne({ name: req.body.type })
+
+  db.employee_type.findOne({ name: req.body.type })
     .then(item => {
       new db.employee({
         name: req.body.name,
@@ -30,21 +30,33 @@ exports.create = (req, res) => {
     })
     .catch(err => {
       return res.status(500).send({ message: "Cannot be createed!" });
-    }) 
+    })
 };
 
 exports.findAll = (req, res) => {
-  db.employee.find()
-  .populate('type')
-  .then(data => {
-      res.send(data);
+  const employeesList = db.employee.find().populate('type')
+  const employeesTypesList = db.employee_type.find()
+
+  Promise.all([employeesList, employeesTypesList]).then((returnedValues) => {
+    const [employeesListResult, employeesTypesListResult] = returnedValues;
+
+    if (employeesListResult == null) {
+      res.status(500).send({ message: "Error." });
+      return;
+    }
+
+    if (employeesTypesListResult == null) {
+      res.status(500).send({ message: "Error." });
+      return;
+    }
+
+    res.status(200).send({
+      employees: employeesListResult,
+      employeesTypes: employeesTypesListResult
     })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving items."
-      });
-    });
+  }).catch((error) => {
+    console.log(error)
+  });
 };
 
 exports.update = (req, res) => {
@@ -56,7 +68,22 @@ exports.update = (req, res) => {
 
   const id = req.params.id;
 
-  db.employee.findByIdAndUpdate(id, req.body, { useFindAndModify: false , runValidators: true})
+  const employeeType = db.employee_type.findOne({ name: req.body.type })
+
+  Promise.all([employeeType]).then((returnedValues) => {
+    const [employeeTypeResult] = returnedValues;
+
+    if (employeeTypeResult == null) {
+      res.status(500).send({ message: "Error." });
+
+      return;
+    }
+
+    db.employee.findByIdAndUpdate(id, {
+      name: req.body.name,
+      surname: req.body.surname,
+      type: employeeTypeResult._id
+    }, { useFindAndModify: false, runValidators: true })
     .then(data => {
       if (!data) {
         res.status(404).send({
@@ -69,6 +96,7 @@ exports.update = (req, res) => {
         message: "Error updating item with id=" + id
       });
     });
+  })
 };
 
 exports.delete = (req, res) => {

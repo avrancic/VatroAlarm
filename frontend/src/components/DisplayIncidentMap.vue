@@ -8,7 +8,7 @@
 
         <ol-vector-layer>
             <ol-source-vector ref="vectors">
-                <ol-interaction-draw @drawstart="drawstart" @drawend="outputData" type="Point">
+                <ol-interaction-draw @drawstart="drawstart" type="Point">
                 </ol-interaction-draw>
             </ol-source-vector>
 

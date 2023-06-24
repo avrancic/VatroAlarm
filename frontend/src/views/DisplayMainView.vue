@@ -11,12 +11,12 @@
       </div>
     </div>
   </nav>
-  
+
   <div class="container-fluid">
     <div class="main-content">
-      <carousel :key="slide" :transition="1500" :wrapAround="true">
-        <slide v-for="slide in 2" :key="slide">
-          <IncidentCard></IncidentCard>
+      <carousel :transition="1500" :wrapAround="true">
+          <slide v-for="item in incidents" :key="item.id">
+          <IncidentCard :data="item"></IncidentCard>
         </slide>
 
         <template #addons>
@@ -37,14 +37,28 @@
 import 'vue3-carousel/dist/carousel.css'
 import { Carousel, Slide, Navigation } from 'vue3-carousel'
 import IncidentCard from '@/components/DisplayIncidentCard.vue'
+import io from "socket.io-client";
 
 export default {
+  data() {
+    return {
+      incidents: []
+    }
+  },
+  created() {
+    const socket = io(`http://localhost:8081/api/socket`);
+
+    socket.on("displayNewData", (items) => {
+      this.incidents = items;
+      console.log(items);
+    });
+  },
   components: {
     Carousel,
     Slide,
     Navigation,
     IncidentCard,
-  },
+  }
 }
 </script>
 

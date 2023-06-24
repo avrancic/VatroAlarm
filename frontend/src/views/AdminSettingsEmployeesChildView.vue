@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="row">
-      <div class="col-sm-10">
+      <div >
         <h1>Employees</h1>
         <hr><br><br>
         <alert :message=alertMessage :type=alertMessageType v-if="showMessage"></alert>
@@ -9,7 +9,7 @@
           Add employee
         </button>
         <br><br>
-        <vue-good-table :rows="rows" :columns="columns">
+        <vue-good-table :rows="employees" :columns="columns">
           <template #table-row="props">
             <span v-if="props.column.field == 'after'">
               <button type="button" class="btn btn-warning btn-sm" @click="toggleEditModal(props.row)">Update</button>
@@ -48,8 +48,9 @@
               <div class="mb-3">
                 <label for="addType" class="form-label">Type:</label>
                 <select class="form-control" id="addType" v-model="addForm.type">
-                    <option>Vozač</option>
-                    <option>Vatrogasac</option>
+                  <option v-for="option in employeesTypes" :key="option.id">
+                    {{ option.name }}
+                  </option>
                 </select>
               </div>
               <div class="btn-group" role="group">
@@ -87,8 +88,8 @@
               </div>
               <div class="mb-3">
                 <label for="editType" class="form-label">Type</label>
-                <select class="form-control" id="addType" v-model="editForm.type">
-                  <option v-for="option in types" :key="option.id">
+                <select class="form-control" id="editType" v-model="editForm.type">
+                  <option v-for="option in employeesTypes" :key="option._id">
                     {{ option.name }}
                   </option>
                 </select>
@@ -137,7 +138,7 @@ export default {
         surname: '',
         type: ''
       },
-      rows: [],
+      employees: [],
       editForm: {
         id: '',
         name: '',
@@ -147,7 +148,7 @@ export default {
       alertMessage: '',
       alertMessageType: 1,
       showMessage: false,
-      types: [
+      employeesTypes: [
       ]
     };
   },
@@ -174,7 +175,8 @@ export default {
     getData() {
       EmployeesDataService.getAll()
         .then(response => {
-          this.rows = response.data;
+          this.employees = response.data.employees;
+          this.employeesTypes = response.data.employeesTypes;
           console.log(response.data);
         })
         .catch(e => {
@@ -237,7 +239,10 @@ export default {
     },
     toggleEditModal(item) {
       if (item) {
-        this.editForm = item;
+        this.editForm.id = item._id;
+        this.editForm.name = item.name;
+        this.editForm.surname = item.surname;
+        this.editForm.type = item.type.name;
       }
       const body = document.querySelector('body');
       this.activeEditModal = !this.activeEditModal;
@@ -263,16 +268,6 @@ export default {
           this.getData();
         });
     },
-    /*loadEmployeesTypes() {
-      EmployeesTypesDataService.getAll()
-        .then(response => {
-          this.types = response.data;
-          console.log(response.data);
-        })
-        .catch(e => {
-          console.log(e);
-        });
-    },*/
   },
   created() {
     this.getData();

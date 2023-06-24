@@ -34,15 +34,15 @@ const routes = [
     beforeEnter: authGuard
   },
   {
-    path: '/admin',
+    path: '/',
     name: 'Admin',
     component: AdminMainView,
     beforeEnter: authGuard,
     children: [
         { path: 'incidents', name:'AdminIncidents', component: AdminIncidentsChildView },
-        { path: 'settings/vehicles', name:'AdminSettingsVehicles', component: AdminSettingsVehiclesChildView },
-        { path: 'settings/employees', name:'AdminSettingsEmployees', component: AdminSettingsEmployeesChildView },
-        { path: 'settings/users', name:'AdminSettingsUsers', component: AdminSettingsUsersChildView },
+        { path: 'vehicles', name:'AdminSettingsVehicles', component: AdminSettingsVehiclesChildView },
+        { path: 'employees', name:'AdminSettingsEmployees', component: AdminSettingsEmployeesChildView },
+        { path: 'users', name:'AdminSettingsUsers', component: AdminSettingsUsersChildView },
       ],
   }
 ]

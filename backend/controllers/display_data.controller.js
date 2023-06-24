@@ -1,6 +1,6 @@
 const db = require("../models");
 
-exports.getData = (req, res) => {
+exports.getIncidents = (req, res) => {
     db.incidents.find()
     .then(data => {
       res.send(data);

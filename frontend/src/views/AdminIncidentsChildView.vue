@@ -1,19 +1,21 @@
 <template>
     <div class="container">
         <div class="row">
-            <div class="col-sm-10">
+            <div>
                 <h1>Incidents</h1>
                 <hr><br><br>
                 <alert :message=alertMessage :type=alertMessageType v-if="showMessage"></alert>
                 <button type="button" class="btn btn-success btn-sm" @click="toggleAddModal">Add incident</button>
                 <br><br>
-                <vue-good-table :rows="rows" :columns="columns">
+                <vue-good-table :rows="incidents" :columns="columns"
+                    :pagination-options="{ enabled: true, mode: 'records' }">>
                     <template #table-row="props">
                         <span v-if="props.column.field == 'after'">
-                            <button type="button" class="btn btn-warning btn-sm"
-                                @click="toggleEditModal(props.row)">Update</button>
+                            <button type="button" class="btn btn-warning btn-sm me-1"
+                                @click="toggleEditModal(props.row)">E</button>
+                                
                             <button type="button" class="btn btn-danger btn-sm"
-                                @click="handleDeleteItem(props.row)">Delete</button>
+                                @click="handleDeleteItem(props.row)">D</button>
                         </span>
                         <span v-else>
                             {{ props.formattedRow[props.column.field] }}
@@ -36,29 +38,44 @@
                     </div>
                     <div class="modal-body">
                         <form>
-                            <Map @PickedLocation="mapOutput"></Map>
+                            <Map @PickedLocation="mapOutput" style="height: 500px;"></Map>
                             <br>
-                            <input id="latitude" type="hidden" v-model="addForm.latitude" />
-                            <input id="longitude" type="hidden" v-model="addForm.longitude" />
                             <div class="mb-3">
-                                <label for="addType" class="form-label">Incident type:</label>
-                                <input type="text" class="form-control" id="addName" v-model="addForm.type"
-                                    placeholder="Enter incident type">
+                                <label for="addType" class="form-label">Type:</label>
+                                <multiselect id="addType" v-model="addForm.type" :options="incidentTypeList"
+                                    :custom-label="({ name }) => `${name}`" />
                             </div>
                             <div class="mb-3">
-                                <label for="addType" class="form-label">Incident description:</label>
-                                <textarea type="text" class="form-control" id="addName" v-model="addForm.description"
+                                <label for="addDescription" class="form-label">Description:</label>
+                                <textarea type="text" class="form-control" id="addDescription" v-model="addForm.description"
                                     rows="3" placeholder="Enter incident description"></textarea>
                             </div>
                             <div class="mb-3">
-                                <label for="addType" class="form-label">city:</label>
-                                <input type="text" class="form-control" id="addName" v-model="addForm.city"
+                                <label for="addCity" class="form-label">City:</label>
+                                <input type="text" class="form-control" id="addCity" v-model="addForm.city"
                                     placeholder="Enter city">
                             </div>
                             <div class="mb-3">
-                                <label for="addType" class="form-label">address:</label>
-                                <input type="text" class="form-control" id="addName" v-model="addForm.address"
+                                <label for="addAddress" class="form-label">Address:</label>
+                                <input type="text" class="form-control" id="addAddress" v-model="addForm.address"
                                     placeholder="Enter address">
+                            </div>
+                            <div class="mb-3">
+                                <label for="addVehicles" class="form-label">Vehicles:</label>
+                                <multiselect :multiple="true" id="addVehicles" v-model="addForm.vehicles"
+                                    :options="vehicleList"
+                                    :custom-label="({ plate, model, number }) => `${number} - ${plate} (${model})`" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="addEmployees" class="form-label">Employees:</label>
+                                <multiselect :multiple="true" id="addEmployees" v-model="addForm.employees"
+                                    :options="employeesList"
+                                    :custom-label="({ name, surname, type }) => `${name} ${surname} (${type.name})`" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="addStatus" class="form-label">Type:</label>
+                                <multiselect id="addStatus" v-model="addForm.status" :options="incidentStatusList"
+                                    :custom-label="({ name }) => `${name}`" />
                             </div>
                             <div class="btn-group" role="group">
                                 <button type="button" class="btn btn-primary btn-sm"
@@ -70,11 +87,12 @@
                 </div>
             </div>
         </div>
+
         <div v-if="activeAddModal" class="modal-backdrop fade show"></div>
 
         <!-- edit modal -->
-        <div ref="editModal" class="modal fade" :class="{ show: activeEditModal, 'd-block': activeEditModal }" tabindex="-1"
-            role="dialog">
+        <div ref="editModal" class="modal modal-xl fade" :class="{ show: activeEditModal, 'd-block': activeEditModal }"
+            tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -86,20 +104,46 @@
                     </div>
                     <div class="modal-body">
                         <form>
+                            <Map @PickedLocation="mapOutput" style="height: 500px;"></Map>
+                            <br>
                             <div class="mb-3">
-                                <label for="editName" class="form-label">Name:</label>
-                                <input type="text" class="form-control" id="editName" v-model="editForm.name"
-                                    placeholder="Enter name">
+                                <label for="editType" class="form-label">Type:</label>
+                                <multiselect id="editType" v-model="editForm.type" :options="incidentTypeList"
+                                    :custom-label="({ name }) => `${name}`" />
                             </div>
                             <div class="mb-3">
-                                <label for="editSurname" class="form-label">Surname:</label>
-                                <input type="text" class="form-control" id="editSurname" v-model="editForm.surname"
-                                    placeholder="Enter surname">
+                                <label for="addDescription" class="form-label">Description:</label>
+                                <textarea type="text" class="form-control" id="addDescription"
+                                    v-model="editForm.description" rows="3"
+                                    placeholder="Enter incident description"></textarea>
                             </div>
                             <div class="mb-3">
-                                <label for="editType" class="form-label">Type</label>
-                                <input type="text" class="form-control" id="editType" v-model="editForm.type"
-                                    placeholder="Enter type">
+                                <label for="editCity" class="form-label">City:</label>
+                                <input type="text" class="form-control" id="editCity" v-model="editForm.city"
+                                    placeholder="Enter city">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editAddress" class="form-label">Address:</label>
+                                <input type="text" class="form-control" id="editAddress" v-model="editForm.address"
+                                    placeholder="Enter address">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editVehicles" class="form-label">Vehicles:</label>
+                                <multiselect :multiple="true" id="editVehicles" v-model="editForm.vehicles"
+                                    :options="vehicleList"
+                                    :custom-label="({ plate, model, number }) => `${number} - ${plate} (${model})`" />
+
+                            </div>
+                            <div class="mb-3">
+                                <label for="editEmployees" class="form-label">Employees:</label>
+                                <multiselect :multiple="true" id="editEmployees" v-model="editForm.employees"
+                                    :options="employeesList"
+                                    :custom-label="({ name, surname, type }) => `${name} ${surname} (${type.name})`" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="editStatus" class="form-label">Type:</label>
+                                <multiselect id="editStatus" v-model="editForm.status" :options="incidentStatusList"
+                                    :custom-label="({ name }) => `${name}`" />
                             </div>
                             <div class="btn-group" role="group">
                                 <button type="button" class="btn btn-primary btn-sm"
@@ -118,49 +162,101 @@
   
 <script>
 import MessageAlert from '@/components/AdminMessage.vue';
-import EmployeesDataService from "@/services/AdminSettingsEmployeesDataService";
-import Map from '@/components/AdminIncidentAddMap.vue';
+import IncidentsDataService from "@/services/AdminSettingsIncidentsDataService";
+import Map from '@/components/AdminIncidentMap.vue';
 
 export default {
     data() {
         return {
+            vehicleList: [
+            ],
+            employeesList: [
+            ],
             columns: [
                 {
-                    label: 'Name',
-                    field: 'name'
+                    label: 'Created',
+                    field: 'created_at',
+                    type: 'date',
+                    dateInputFormat: 'yyyy-MM-dd\'T\'HH:mm:ss.SSSSSSXXX',
+                    dateOutputFormat: 'dd-MM-yyyy HH:mm',
+                    tdClass: 'vgt-left-align',
+                    thClass: 'vgt-left-align'
                 },
                 {
-                    label: 'Surname',
-                    field: 'surname'
+                    label: 'type',
+                    field: 'type.name'
                 },
                 {
-                    label: 'Type',
-                    field: 'type.name',
+                    label: 'Description',
+                    field: 'description',
+                },
+                {
+                    label: 'City',
+                    field: 'city',
+                },
+                {
+                    label: 'Address',
+                    field: 'address',
+                },
+                {
+                    label: 'Vehicles',
+                    field: 'vehicles',
+                    type: 'String',
+                    filterable: true,
+                    placeholder: 'Vehicles',
+                    formatFn: this.vehicleFn,
+
+                },
+                {
+                    label: 'Employees',
+                    type: 'String',
+                    field: 'employees',
+                    filterable: true,
+                    placeholder: 'Employees',
+                    formatFn: this.employeesFn,
+
+                },
+                {
+                    label: 'Status',
+                    field: 'status.name',
                 },
                 {
                     field: 'after',
+                    width: '85px'
                 },
             ],
             activeAddModal: false,
             activeEditModal: false,
             addForm: {
+                type: '',
+                description: '',
+                city: '',
+                address: '',
                 latitude: 0,
                 longitude: 0,
-                name: '',
-                surname: '',
-                type: ''
+                vehicles: [],
+                employees: [],
+                status: ''
             },
-            rows: [],
+            incidents: [],
             editForm: {
-                id: '',
-                name: '',
-                surname: '',
-                type: ''
+                _id: '',
+                type: '',
+                description: '',
+                city: '',
+                address: '',
+                latitude: 0,
+                longitude: 0,
+                vehicles: [],
+                employees: [],
+                status: ''
             },
             alertMessage: '',
             alertMessageType: 1,
             showMessage: false,
-            types: [
+            incidentTypeList: [
+            ],
+            incidentStatusList: [
             ]
         };
     },
@@ -169,27 +265,62 @@ export default {
         Map
     },
     methods: {
+        vehicleFn(value) {
+            var out = "";
+            var first = true;
+
+            for (const item in value) {
+                if (!first) out += ", "
+
+                out += value[item].plate;
+
+                first = false;
+            }
+
+            return out;
+        },
+        employeesFn(value) {
+            var out = "";
+            var first = true;
+            
+            for (const item in value) {
+                if (!first) out += ", "
+
+                out += value[item].name + ' ' + value[item].surname;
+
+                first = false;
+            }
+
+            return out;
+        },
+        vehiclesFn(rowObj) {
+            console.log(rowObj);
+        },
         addItem(payload) {
-            EmployeesDataService.create(payload)
+            IncidentsDataService.create(payload)
                 .then(() => {
                     this.getData();
-                    this.alertMessage = 'Employee added!';
+                    this.alertMessage = 'Added!';
                     this.alertMessageType = 0;
                     this.showMessage = true;
                 })
                 .catch(error => {
                     console.log(error);
-                    this.alertMessage = 'Employee cannot be added!';
+                    this.alertMessage = 'Cannot be added!';
                     this.alertMessageType = 1;
                     this.showMessage = true;
                     this.getData();
                 });
         },
         getData() {
-            EmployeesDataService.getAll()
+            IncidentsDataService.getAll()
                 .then(response => {
-                    this.rows = response.data;
-                    console.log(response.data);
+                    this.incidents = response.data.incidents;
+                    this.incidentTypeList = response.data.incidentTypeList;
+                    this.incidentStatusList = response.data.incidentStatusList;
+
+                    this.employeesList = response.data.employeesList;
+                    this.vehicleList = response.data.vehicleList;
                 })
                 .catch(e => {
                     console.log(e);
@@ -209,23 +340,36 @@ export default {
         handleEditCancel() {
             this.toggleEditModal(null);
             this.initForm();
-            this.getData(); // why?
+            this.getData();
         },
         handleEditSubmit() {
             this.toggleEditModal(null);
-            this.updateItem(this.editForm, this.editForm.id);
+            this.updateItem(this.editForm, this.editForm._id);
         },
         initForm() {
-            this.addForm.name = '';
-            this.addForm.surname = '';
-            this.addForm.type = [];
-            this.editForm.id = '';
-            this.editForm.name = '';
-            this.editForm.surname = '';
-            this.editForm.type = [];
+            this.addForm.type = '',
+                this.addForm.description = '',
+                this.addForm.city = '',
+                this.addForm.address = '',
+                this.addForm.latitude = 0,
+                this.addForm.longitude = 0,
+                this.addForm.vehicles = [],
+                this.addForm.employees = [],
+                this.addForm.status = ''
+
+            this.editForm._id = '';
+            this.editForm.type = '',
+                this.editForm.description = '',
+                this.editForm.city = '',
+                this.editForm.address = '',
+                this.editForm.latitude = 0,
+                this.editForm.longitude = 0,
+                this.editForm.vehicles = [],
+                this.editForm.employees = [],
+                this.editForm.status = ''
         },
         removeItem(itemID) {
-            EmployeesDataService.delete(itemID)
+            IncidentsDataService.delete(itemID)
                 .then(() => {
                     this.getData();
                     this.alertMessage = 'Employee removed!';
@@ -262,7 +406,7 @@ export default {
             }
         },
         updateItem(payload, itemID) {
-            EmployeesDataService.update(itemID, payload)
+            IncidentsDataService.update(itemID, payload)
                 .then(() => {
                     this.getData();
                     this.alertMessage = 'Employee updated!';
@@ -280,7 +424,8 @@ export default {
         mapOutput(value) {
             this.addForm.latitude = value.latitude;
             this.addForm.longitude = value.longitude;
-            //console.log(value);
+            this.addForm.city = value.cityName;
+            this.addForm.address = value.streetName;
         }
     },
     created() {

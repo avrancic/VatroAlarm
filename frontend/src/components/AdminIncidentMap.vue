@@ -1,5 +1,5 @@
 <template>
-    <ol-map :loadTilesWhileAnimating="true" :loadTilesWhileInteracting="true" style="height: 700px;">
+    <ol-map :loadTilesWhileAnimating="true" :loadTilesWhileInteracting="true">
         <ol-view :center="center" :rotation="rotation" :zoom="zoom" :projection="projection" />
 
         <ol-tile-layer>
@@ -55,8 +55,8 @@ export default {
                     this.$emit('PickedLocation', {
                         latitude: event.feature.getGeometry().getCoordinates()[0],
                         longitude: event.feature.getGeometry().getCoordinates()[1],
-                        cityName: "test",
-                        streetName: "test1"
+                        cityName: response.data.address.town,
+                        streetName: response.data.address.road + ' ' + response.data.address.house_number
                     })
 
                     console.log(response);
@@ -65,8 +65,8 @@ export default {
                     this.$emit('PickedLocation', {
                         latitude: event.feature.getGeometry().getCoordinates()[0],
                         longitude: event.feature.getGeometry().getCoordinates()[1],
-                        cityName: "test",
-                        streetName: "test1"
+                        cityName: "",
+                        streetName: ""
                     })
 
                     console.log(error);

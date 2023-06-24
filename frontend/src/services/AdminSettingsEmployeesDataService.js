@@ -25,6 +25,10 @@ class AdminSettingsEmployeesDataService {
   deleteAll() {
     return http.delete(`/employees`, { headers: auth() });
   }
+
+  getTypes() {
+    return http.get(`/employees_types`, { headers: auth() });
+  }
 }
 
 export default new AdminSettingsEmployeesDataService();

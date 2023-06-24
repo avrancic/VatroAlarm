@@ -5,13 +5,9 @@ module.exports = mongoose => {
         type: Date,
         required: true
       },
-      ended_at: {
-        type: Date,
-        required: true
-      },
       type: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "EmployeeType"
+        ref: "IncidentType"
       },
       description: {
         type: String,
@@ -36,20 +32,23 @@ module.exports = mongoose => {
         type: Number,
         required: true
       },
-      vehiclesId: {
-        type: [['UUID']],
+      vehicles: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Vehicle",
         required: true
-      },
-      employeesId: {
-        type: [['UUID']],
+      }],
+      employees: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Employee",
         required: true
-      },
-      status: {/*0 otvoren ili 1 zatvoren*/
-        type: Boolean,
-        default: () => 0
+      }],
+      status: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "IncidentStatus",
+        required: true
       }
     }
   );
 
-  return mongoose.model("incident", schema);
+  return mongoose.model("Incident", schema);
   };

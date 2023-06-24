@@ -23,5 +23,5 @@ module.exports = mongoose => {
     }
   );
 
-  return mongoose.model("vehicle", schema);
+  return mongoose.model("Vehicle", schema);
 };

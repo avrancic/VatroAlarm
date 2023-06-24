@@ -5,20 +5,15 @@
             <div class="sidebar-header">
                 <h1>VatroAlarm</h1>
             </div>
+
+            <br>
             <ul class="text-secondary">
                 <li>
                     <RouterLink :to="{ name: 'AdminIncidents' }">Incidents</RouterLink>
                 </li>
-            </ul>
 
-            <hr class="navbar-divider my-5 opacity-20">
+                <br>
 
-            <ul class="text-secondary">
-                <li>
-                    <span class="nav-link text-xs font-semibold text-uppercase text-muted ls-wide" href="#">
-                        Settings
-                    </span>
-                </li>
                 <li>
                     <RouterLink :to="{ name: 'AdminSettingsVehicles' }">Vehicles list</RouterLink>
                 </li>
@@ -29,7 +24,7 @@
                     <RouterLink :to="{ name: 'AdminSettingsUsers' }">Users</RouterLink>
                 </li>
             </ul>
-        </nav>
+ </nav>
 
         <div id="body">
             <nav class="navbar navbar-expand-lg navbar-white bg-white">
