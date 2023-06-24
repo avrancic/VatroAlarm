@@ -2,19 +2,19 @@ import http from "@/http-common";
 
 class AdminSettingsUsersDataService {
   getAll() {
-    return http.get("/users");
+    return http.get("/api/users");
   }
 
   create(data) {
-    return http.post("/users", data);
+    return http.post("/api/users", data);
   }
 
   update(id, data) {
-    return http.put(`/users/${id}`, data);
+    return http.put(`/api/users/${id}`, data);
   }
 
   delete(id) {
-    return http.delete(`/users/${id}`);
+    return http.delete(`/api/users/${id}`);
   }
 }
 

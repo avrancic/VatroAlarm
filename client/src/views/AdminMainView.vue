@@ -24,7 +24,7 @@
                     <RouterLink :to="{ name: 'AdminSettingsUsers' }">Users</RouterLink>
                 </li>
             </ul>
- </nav>
+        </nav>
 
         <div id="body">
             <nav class="navbar navbar-expand-lg navbar-white bg-white">
@@ -91,6 +91,10 @@ body {
     font-family: "Lato", "Helvetica Neue", Arial, Helvetica, sans-serif;
     font-size: 1rem;
     color: #444;
+}
+
+.content {
+    padding-top: 30px
 }
 
 .wrapper {

@@ -1,21 +1,18 @@
 const db = require("../models");
 
 exports.create = (req, res) => {
-    const incident = new db.incident({
+    new db.incident({
         created_at: new Date(),
+        type: req.body.type,
         description: req.body.description,
         city: req.body.city,
         address: req.body.address,
         latitude: req.body.latitude,
         longitude: req.body.longitude,
-    })
-
-    incident.status = req.body.status._id;
-    incident.type = req.body.type._id;
-    incident.vehicles = req.body.vehicles.map(a => a._id);
-    incident.employees = req.body.employees.map(a => a._id);
-
-    incident.save()
+        vehicles: req.body.vehicles.map(a => a._id),
+        employees: req.body.employees.map(a => a._id),
+        status: req.body.status,
+    }).save()
         .then(() => {
             return res.status(200).send({ message: "Created!" });
         })
@@ -61,10 +58,10 @@ exports.update = (req, res) => {
         address: req.body.address,
         latitude: req.body.latitude,
         longitude: req.body.longitude,
-        status: req.body.status._id,
-        type: req.body.type._id,
+        type: req.body.type,
         vehicles: req.body.vehicles.map(a => a._id),
-        employees: req.body.employees.map(a => a._id)
+        employees: req.body.employees.map(a => a._id),
+        status: req.body.status,
     }, { useFindAndModify: false, runValidators: true })
         .then(data => {
             if (!data) {
@@ -85,20 +82,20 @@ exports.delete = (req, res) => {
     const id = req.params.id;
 
     db.incident.findByIdAndRemove(id)
-      .then(data => {
-        if (!data) {
-          res.status(404).send({
-            message: `Cannot delete item with id=${id}.`
-          });
-        } else {
-          res.send({
-            message: "Item was deleted successfully!"
-          });
-        }
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: "Could not delete item with id=" + id
+        .then(data => {
+            if (!data) {
+                res.status(404).send({
+                    message: `Cannot delete item with id=${id}.`
+                });
+            } else {
+                res.send({
+                    message: "Item was deleted successfully!"
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Could not delete item with id=" + id
+            });
         });
-      });  
 };

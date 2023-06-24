@@ -3,7 +3,7 @@ import http from "@/http-common";
 class AuthService {
   login(user) {
     return http
-      .post('/users/login', {
+      .post('/api/users/login', {
         username: user.username,
         password: user.password
       })

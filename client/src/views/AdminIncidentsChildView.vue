@@ -42,8 +42,11 @@
                             <br>
                             <div class="mb-3">
                                 <label for="addType" class="form-label">Type:</label>
-                                <multiselect id="addType" v-model="addForm.type" :options="incidentTypeList"
-                                    :custom-label="({ name }) => `${name}`" />
+                                <select class="form-control" id="addType" v-model="addForm.type">
+                                    <option v-for="option in incidentTypeList" :key="option._id" :value="option._id">
+                                        {{ option.name }}
+                                    </option>
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label for="addDescription" class="form-label">Description:</label>
@@ -73,9 +76,12 @@
                                     :custom-label="({ name, surname, type }) => `${name} ${surname} (${type.name})`" />
                             </div>
                             <div class="mb-3">
-                                <label for="addStatus" class="form-label">Type:</label>
-                                <multiselect id="addStatus" v-model="addForm.status" :options="incidentStatusList"
-                                    :custom-label="({ name }) => `${name}`" />
+                                <label for="addStatus" class="form-label">Status:</label>
+                                <select class="form-control" id="addStatus" v-model="addForm.status">
+                                    <option v-for="option in incidentStatusList" :key="option._id" :value="option._id">
+                                        {{ option.name }}
+                                    </option>
+                                </select>
                             </div>
                             <div class="btn-group" role="group">
                                 <button type="button" class="btn btn-primary btn-sm"
@@ -108,8 +114,11 @@
                             <br>
                             <div class="mb-3">
                                 <label for="editType" class="form-label">Type:</label>
-                                <multiselect id="editType" v-model="editForm.type" :options="incidentTypeList"
-                                    :custom-label="({ name }) => `${name}`" />
+                                <select class="form-control" id="editType" v-model="editForm.type">
+                                    <option v-for="option in incidentTypeList" :key="option._id" :value="option._id">
+                                        {{ option.name }}
+                                    </option>
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label for="addDescription" class="form-label">Description:</label>
@@ -142,8 +151,12 @@
                             </div>
                             <div class="mb-3">
                                 <label for="editStatus" class="form-label">Type:</label>
-                                <multiselect id="editStatus" v-model="editForm.status" :options="incidentStatusList"
-                                    :custom-label="({ name }) => `${name}`" />
+
+                                <select class="form-control" id="editStatus" v-model="editForm.status">
+                                    <option v-for="option in incidentStatusList" :key="option._id" :value="option._id">
+                                        {{ option.name }}
+                                    </option>
+                                </select>
                             </div>
                             <div class="btn-group" role="group">
                                 <button type="button" class="btn btn-primary btn-sm"
@@ -240,7 +253,7 @@ export default {
             },
             incidents: [],
             editForm: {
-                _id: '',
+                id: '',
                 type: '',
                 description: '',
                 city: '',
@@ -344,7 +357,7 @@ export default {
         },
         handleEditSubmit() {
             this.toggleEditModal(null);
-            this.updateItem(this.editForm, this.editForm._id);
+            this.updateItem(this.editForm, this.editForm.id);
         },
         initForm() {
             this.addForm.type = '',
@@ -356,8 +369,7 @@ export default {
                 this.addForm.vehicles = [],
                 this.addForm.employees = [],
                 this.addForm.status = ''
-
-            this.editForm._id = '';
+            this.editForm.id = '';
             this.editForm.type = '',
                 this.editForm.description = '',
                 this.editForm.city = '',
@@ -395,7 +407,16 @@ export default {
         },
         toggleEditModal(item) {
             if (item) {
-                this.editForm = item;
+                this.editForm.id = item._id;
+                this.editForm.type = item.type._id;
+                this.editForm.description = item.description;
+                this.editForm.city = item.city;
+                this.editForm.address = item.address;
+                this.editForm.latitude = item.latitude;
+                this.editForm.longitude = item.longitude;
+                this.editForm.vehicles = item.vehicles;
+                this.editForm.employees = item.employees;
+                this.editForm.status = item.status._id;
             }
             const body = document.querySelector('body');
             this.activeEditModal = !this.activeEditModal;
