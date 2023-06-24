@@ -35,26 +35,6 @@ db.mongoose
   })
   .then(() => {
     console.log("Connected to the database!");
-
-    const thoughtChangeStream = db.incident.watch();
-
-    thoughtChangeStream.on("change", (change) => {
-      switch (change.operationType) {
-        case "insert":
-          const thought = {
-            _id: change.fullDocument._id,
-            name: change.fullDocument.name,
-            description: change.fullDocument.description,
-          };
-
-          io.of("/api/socket").emit("newThought", thought);
-          break;
-
-        case "delete":
-          io.of("/api/socket").emit("deletedThought", change.documentKey._id);
-          break;
-      }
-    });
   })
   .catch(err => {
     console.log("Cannot connect to the database!", err);
@@ -84,8 +64,7 @@ io.of("/api/socket").on("connection", (socket) => {
   const stream = db.incident.watch();
 
   stream.on("change", (change) => {
-   // sendCanges();
-    console.log(change)
+    sendCanges();
   });
 });
 

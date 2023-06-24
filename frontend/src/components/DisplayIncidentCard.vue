@@ -4,38 +4,38 @@
             <h5 class="card-title">INCIDENT INFO</h5>
         </div>
         <div class="card-body pt-0">
-            <IncidentMap></IncidentMap>
+            <IncidentMap :latitude="data.latitude" :longitude="data.longitude"></IncidentMap>
         </div>
         <div class="row m-l-0 m-r-0">
                 <div class="card-block">
                     <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Information</h6>
-                    <div class="row">
-                        <div class="col-sm-6">
+                    <div class="d-flex bd-highlight">
+                        <div class="p-2 flex-fill bd-highlight">
                             <p class="m-b-10 f-w-600">Date</p>
                             <h6 class="text-muted f-w-400">{{ data.created_at }}</h6>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="p-2 flex-fill bd-highlight">
                             <p class="m-b-10 f-w-600">Description</p>
                             <h6 class="text-muted f-w-400">{{ data.description }}</h6>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="p-2 flex-fill bd-highlight">
                             <p class="m-b-10 f-w-600">Location</p>
                             <h6 class="text-muted f-w-400">{{ data.city + ', ' + data.address }}</h6>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="p-2 flex-fill bd-highlight">
                             <p class="m-b-10 f-w-600">Type</p>
                             <h6 class="text-muted f-w-400">{{ data.address }}</h6>
                         </div>
                     </div>
                     <h6 class="m-b-20 m-t-40 p-b-5 b-b-default f-w-600">Projects</h6>
-                    <div class="row">
-                        <div class="col-sm-6">
+                    <div class="d-flex bd-highlight">
+                        <div class="p-2 flex-fill bd-highlight">
                             <p class="m-b-10 f-w-600">Vehicles</p>
-                            <h6 class="text-muted f-w-400">{{ data.created_at }}</h6>
+                            <h6 class="text-muted f-w-400">{{ data.Vehicles }}</h6>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="p-2 flex-fill bd-highlight">
                             <p class="m-b-10 f-w-600">Employees</p>
-                            <h6 class="text-muted f-w-400">{{ data.created_at }}</h6>
+                            <h6 class="text-muted f-w-400">{{ data.Employees }}</h6>
                         </div>
                     </div>
             </div>
@@ -103,8 +103,6 @@ export default {
 .img-radius {
     border-radius: 5px;
 }
-
-
 
 h6 {
     font-size: 14px;
@@ -187,9 +185,6 @@ h6 {
     transition: all 0.3s ease-in-out;
 }
 
-
-
-
 .card {
     width: 100%;
     height: 100%;
@@ -197,7 +192,6 @@ h6 {
 
     max-width: 1700px;
 }
-
 
 .carousel {
     height: 100%

@@ -12,7 +12,7 @@
     </div>
   </nav>
 
-  <div class="container-fluid">
+  <div class="container-fluid p-0">
     <div class="main-content">
       <carousel :transition="1500" :wrapAround="true">
           <slide v-for="item in incidents" :key="item.id">
@@ -25,12 +25,6 @@
       </carousel>
     </div>
   </div>
-
-  <footer class="footer">
-    <div class="container">
-      test footer
-    </div>
-  </footer>
 </template>
 
 <script>
@@ -73,13 +67,6 @@ body {
   height: 100%;
 }
 
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 60px;
-  background-color: #999999;
-}
 
 body>.container-fluid {
   padding-top: 50px;
@@ -89,13 +76,17 @@ body>.container-fluid {
   margin-bottom: 0;
 }
 
-.footer {
-  padding: 15px 0;
-}
 
 .main-content {
   background: #efefef;
   padding: 50px;
-  height: calc(100vh - 110px);
+  height: calc(100vh - 46px);
 }
+
+
+.container-fluid{
+overflow: hidden;
+}
+
+
 </style>

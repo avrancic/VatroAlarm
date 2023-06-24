@@ -11,25 +11,21 @@ exports.create = (req, res) => {
   })
     .then(data => {
       if (data) res.status(400).send({ message: "User alredy exists." });
-
-      db.user_role.findOne({ name: req.body.role })
-        .then(role => {
-          new db.user({
-            name: req.body.name,
-            username: req.body.username,
-            password: bcrypt.hashSync(req.body.password, 8),
-            role: role._id
-          }).save()
-            .then(() => {
-              return res.status(200).send({ message: "User created!" });
-            })
-            .catch(err => {
-              return res.status(500).send({ message: "Usr cannot be createed!" });
-            })
+      new db.user({
+        name: req.body.name,
+        username: req.body.username,
+        password: bcrypt.hashSync(req.body.password, 8),
+        role: req.body.role
+      }).save()
+        .then(() => {
+          return res.status(200).send({ message: "User created!" });
         })
         .catch(err => {
           return res.status(500).send({ message: "Usr cannot be createed!" });
         })
+    })
+    .catch(err => {
+      return res.status(500).send({ message: "Usr cannot be createed!" });
     })
 };
 
@@ -71,18 +67,56 @@ exports.login = (req, res) => {
     });
 };
 
-exports.findAll = (req, res) => {
-  db.user.find({}, "name username")
-    .populate('role')
+exports.update = (req, res) => {
+  if (!req.body) {
+    return res.status(400).send({
+      message: "Data to update can not be empty!"
+    });
+  }
+
+  var data = {
+    name: req.body.name,
+    role: req.body.role
+  }
+
+  if (req.body.password != null) {
+    data.password = bcrypt.hashSync(req.body.password, 8)
+  }
+
+  db.user.findByIdAndUpdate(req.params.id, data, { useFindAndModify: false, runValidators: true })
     .then(data => {
-      res.send(data);
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot update item with id=${req.params.id}.`
+        });
+      } else res.send({ message: "Item updated successfully." });
     })
     .catch(err => {
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving items."
+        message: "Error updating item with id=" + req.params.id
       });
     });
+};
+
+exports.findAll = (req, res) => {
+  const usersList = db.user.find({}, "name username").populate('role')
+  const usersRolesList = db.user_role.find()
+
+  Promise.all([usersList, usersRolesList]).then((returnedValues) => {
+    const [usersListResult, usersRolesListResult] = returnedValues;
+
+    if (usersListResult == null || usersRolesListResult == null) {
+      res.status(500).send({ message: "Error." });
+      return;
+    }
+
+    res.status(200).send({
+      users: usersListResult,
+      userRoles: usersRolesListResult
+    })
+  }).catch((error) => {
+    console.log(error)
+  });
 };
 
 exports.delete = (req, res) => {

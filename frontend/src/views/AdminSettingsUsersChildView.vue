@@ -6,14 +6,14 @@
         <hr><br><br>
         <alert :message=alertMessage :type=alertMessageType v-if="showMessage"></alert>
         <button type="button" class="btn btn-success btn-sm" @click="toggleAddModal">
-          Add user
+          Add Account
         </button>
         <br><br>
-        <vue-good-table :rows="rows" :columns="columns">
+        <vue-good-table :rows="usersList" :columns="columns" :pagination-options="{ enabled: true, mode: 'records' }">
           <template #table-row="props">
             <span v-if="props.column.field == 'after'">
-              <button type="button" class="btn btn-warning btn-sm" @click="toggleEditModal(props.row)">Update</button>
-              <button type="button" class="btn btn-danger btn-sm" @click="handleDeleteItem(props.row)">Delete</button>
+              <button type="button" class="btn btn-warning btn-sm me-1" @click="toggleEditModal(props.row)">E</button>
+              <button type="button" class="btn btn-danger btn-sm" @click="handleDeleteItem(props.row)">D</button>
             </span>
             <span v-else>
               {{ props.formattedRow[props.column.field] }}
@@ -53,8 +53,9 @@
               <div class="mb-3">
                 <label for="addRole" class="form-label">Role:</label>
                 <select class="form-control" id="addRole" v-model="addForm.role">
-                  <option>admin</option>
-                  <option>user</option>
+                  <option v-for="option in userRolesList" :key="option._id" :value="option._id">
+                    {{ option.name }}
+                  </option>
                 </select>
               </div>
               <div class="btn-group" role="group">
@@ -76,7 +77,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Update</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="toggleEditModal">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="toggleEditModal(null)">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -87,13 +88,17 @@
                 <input type="text" class="form-control" id="editName" v-model="editForm.name" placeholder="Enter name">
               </div>
               <div class="mb-3">
-                <label for="editSurname" class="form-label">Surname:</label>
-                <input type="text" class="form-control" id="editSurname" v-model="editForm.surname"
-                  placeholder="Enter surname">
+                <label for="editPassword" class="form-label">Password:</label>
+                <input type="text" class="form-control" id="addPassword" v-model="editForm.password"
+                  placeholder="Enter password">
               </div>
               <div class="mb-3">
-                <label for="editType" class="form-label">Type</label>
-                <input type="text" class="form-control" id="editType" v-model="editForm.type" placeholder="Enter type">
+                <label for="editRole" class="form-label">Role:</label>
+                <select class="form-control" id="editRole" v-model="editForm.role">
+                  <option v-for="option in userRolesList" :key="option.name" :value="option._id">
+                    {{ option.name }}
+                  </option>
+                </select>
               </div>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary btn-sm" @click="handleEditSubmit">Submit</button>
@@ -115,7 +120,7 @@ import UsersDataService from "@/services/AdminSettingsUsersDataService";
 export default {
   data() {
     return {
-        columns: [
+      columns: [
         {
           label: 'Name',
           field: 'name'
@@ -130,6 +135,7 @@ export default {
         },
         {
           field: 'after',
+          width: '85px'
         },
       ],
       activeAddModal: false,
@@ -140,7 +146,7 @@ export default {
         password: '',
         role: ''
       },
-      rows: [],
+      usersList: [],
       editForm: {
         id: '',
         name: '',
@@ -149,7 +155,8 @@ export default {
       },
       alertMessage: '',
       alertMessageType: 1,
-      showMessage: false
+      showMessage: false,
+      userRolesList:[]
     };
   },
   components: {
@@ -160,13 +167,13 @@ export default {
       UsersDataService.create(payload)
         .then(() => {
           this.getData();
-          this.alertMessage = 'Employee added!';
+          this.alertMessage = 'Account added!';
           this.alertMessageType = 0;
           this.showMessage = true;
         })
         .catch(error => {
           console.log(error);
-          this.alertMessage = 'Employee cannot be added!';
+          this.alertMessage = 'Account cannot be added!';
           this.alertMessageType = 1;
           this.showMessage = true;
           this.getData();
@@ -175,8 +182,8 @@ export default {
     getData() {
       UsersDataService.getAll()
         .then(response => {
-          this.rows = response.data;
-          console.log(response.data);
+          this.usersList = response.data.users;
+          this.userRolesList = response.data.userRoles;
         })
         .catch(e => {
           console.log(e);
@@ -194,35 +201,34 @@ export default {
       this.removeItem(item._id);
     },
     handleEditCancel() {
-      this.toggleEditModal(null);
+      this.toggleEditModal();
       this.initForm();
       this.getData(); // why?
     },
     handleEditSubmit() {
-      this.toggleEditModal(null);
+      this.toggleEditModal();
       this.updateItem(this.editForm, this.editForm.id);
     },
     initForm() {
       this.addForm.name = '';
       this.addForm.username = '';
       this.addForm.password = '';
-      this.addForm.permisisons = [];
+      this.addForm.role = [];
       this.editForm.id = '';
       this.editForm.name = '';
-      this.editForm.username = '';
-      this.editForm.permisisons = [];
+      this.editForm.role = [];
     },
     removeItem(itemID) {
       UsersDataService.delete(itemID)
         .then(() => {
           this.getData();
-          this.alertMessage = 'Employee removed!';
+          this.alertMessage = 'Account removed!';
           this.alertMessageType = 0;
           this.showMessage = true;
         })
         .catch(error => {
           console.log(error);
-          this.alertMessage = 'Employee cannot be removed!';
+          this.alertMessage = 'Account cannot be removed!';
           this.alertMessageType = 1;
           this.showMessage = true;
           this.getData();
@@ -239,7 +245,10 @@ export default {
     },
     toggleEditModal(item) {
       if (item) {
-        this.editForm = item;
+        this.editForm.id = item._id;
+        this.editForm.name = item.name;
+        this.editForm.password = "";
+        this.editForm.role = item.role._id;
       }
       const body = document.querySelector('body');
       this.activeEditModal = !this.activeEditModal;
@@ -253,13 +262,13 @@ export default {
       UsersDataService.update(itemID, payload)
         .then(() => {
           this.getData();
-          this.alertMessage = 'Employee updated!';
+          this.alertMessage = 'Account updated!';
           this.alertMessageType = 0;
           this.showMessage = true;
         })
         .catch(error => {
           console.log(error);
-          this.alertMessage = 'Employee cannot be updated!';
+          this.alertMessage = 'Account cannot be updated!';
           this.alertMessageType = 1;
           this.showMessage = true;
           this.getData();

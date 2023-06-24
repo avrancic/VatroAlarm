@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="row">
-      <div >
+      <div>
         <h1>Employees</h1>
         <hr><br><br>
         <alert :message=alertMessage :type=alertMessageType v-if="showMessage"></alert>
@@ -9,11 +9,11 @@
           Add employee
         </button>
         <br><br>
-        <vue-good-table :rows="employees" :columns="columns">
+        <vue-good-table :rows="employeesList" :columns="columns" :pagination-options="{ enabled: true, mode: 'records' }">
           <template #table-row="props">
             <span v-if="props.column.field == 'after'">
-              <button type="button" class="btn btn-warning btn-sm" @click="toggleEditModal(props.row)">Update</button>
-              <button type="button" class="btn btn-danger btn-sm" @click="handleDeleteItem(props.row)">Delete</button>
+              <button type="button" class="btn btn-warning btn-sm me-1" @click="toggleEditModal(props.row)">E</button>
+              <button type="button" class="btn btn-danger btn-sm" @click="handleDeleteItem(props.row)">D</button>
             </span>
             <span v-else>
               {{ props.formattedRow[props.column.field] }}
@@ -48,7 +48,7 @@
               <div class="mb-3">
                 <label for="addType" class="form-label">Type:</label>
                 <select class="form-control" id="addType" v-model="addForm.type">
-                  <option v-for="option in employeesTypes" :key="option.id">
+                  <option v-for="option in employeesTypes" :key="option._id" :value="option._id">
                     {{ option.name }}
                   </option>
                 </select>
@@ -71,7 +71,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Update</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="toggleEditModal">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="toggleEditModal(null)">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -89,7 +89,7 @@
               <div class="mb-3">
                 <label for="editType" class="form-label">Type</label>
                 <select class="form-control" id="editType" v-model="editForm.type">
-                  <option v-for="option in employeesTypes" :key="option._id">
+                  <option v-for="option in employeesTypes" :key="option._id" :value="option._id">
                     {{ option.name }}
                   </option>
                 </select>
@@ -129,6 +129,7 @@ export default {
         },
         {
           field: 'after',
+          width: '85px'
         },
       ],
       activeAddModal: false,
@@ -138,7 +139,7 @@ export default {
         surname: '',
         type: ''
       },
-      employees: [],
+      employeesList: [],
       editForm: {
         id: '',
         name: '',
@@ -175,7 +176,7 @@ export default {
     getData() {
       EmployeesDataService.getAll()
         .then(response => {
-          this.employees = response.data.employees;
+          this.employeesList = response.data.employees;
           this.employeesTypes = response.data.employeesTypes;
           console.log(response.data);
         })
@@ -242,7 +243,7 @@ export default {
         this.editForm.id = item._id;
         this.editForm.name = item.name;
         this.editForm.surname = item.surname;
-        this.editForm.type = item.type.name;
+        this.editForm.type = item.type._id;
       }
       const body = document.querySelector('body');
       this.activeEditModal = !this.activeEditModal;

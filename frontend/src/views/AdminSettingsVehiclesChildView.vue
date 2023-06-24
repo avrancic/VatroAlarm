@@ -9,11 +9,11 @@
           Add vehicle
         </button>
         <br><br>
-        <vue-good-table :rows="rows" :columns="columns">
+        <vue-good-table :rows="vehiclesList" :columns="columns" :pagination-options="{ enabled: true, mode: 'records' }">
           <template #table-row="props">
             <span v-if="props.column.field == 'after'">
-              <button type="button" class="btn btn-warning btn-sm" @click="toggleEditModal(props.row)">Update</button>
-              <button type="button" class="btn btn-danger btn-sm" @click="handleDeleteItem(props.row)">Delete</button>
+              <button type="button" class="btn btn-warning btn-sm me-1" @click="toggleEditModal(props.row)">E</button>
+              <button type="button" class="btn btn-danger btn-sm" @click="handleDeleteItem(props.row)">D</button>
             </span>
             <span v-else>
               {{ props.formattedRow[props.column.field] }}
@@ -30,7 +30,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Add a new vehicle</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="toggleAddModal">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="toggleAddModal(null)">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -52,14 +52,9 @@
               <div class="mb-3">
                 <label for="addSurname" class="form-label">Vehicle type:</label>
                 <select class="form-control" id="addSurname" v-model="addForm.type">
-                  <option>Navalno vozilo</option>
-                  <option>Autocisterna</option>
-                  <option>Šumsko vozilo</option>
-                  <option>Tehničko vozilo</option>
-                  <option>Kombi za putnike</option>
-                  <option>Zapovjedno vozilo</option>
-                  <option>Autoljestve</option>
-                  <option>Teretni kombi</option>
+                  <option v-for="option in vehicleTypes" :key="option._id" :value="option._id">
+                    {{ option.name }}
+                  </option>
                 </select>
               </div>
               <div class="btn-group" role="group">
@@ -87,18 +82,25 @@
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label for="editPlate" class="form-label">Plate:</label>
-                <input type="text" class="form-control" id="editPlate" v-model="editForm.plate" placeholder="Enter title">
-              </div>
-              <div class="mb-3">
-                <label for="editModel" class="form-label">Model:</label>
-                <input type="text" class="form-control" id="editModel" v-model="editForm.model"
-                  placeholder="Enter author">
-              </div>
-              <div class="mb-3">
-                <label for="editNumber" class="form-label">Number</label>
+                <label for="editNumber" class="form-label">Vehicle number:</label>
                 <input type="text" class="form-control" id="editNumber" v-model="editForm.number"
-                  placeholder="Enter author">
+                  placeholder="Enter number">
+              </div>
+              <div class="mb-3">
+                <label for="editPlate" class="form-label">Vehicle plate:</label>
+                <input type="text" class="form-control" id="editPlate" v-model="editForm.plate" placeholder="Enter plate">
+              </div>
+              <div class="mb-3">
+                <label for="editModel" class="form-label">Vehicle model:</label>
+                <input type="text" class="form-control" id="editModel" v-model="editForm.model" placeholder="Enter model">
+              </div>
+              <div class="mb-3">
+                <label for="editSurname" class="form-label">Vehicle type:</label>
+                <select class="form-control" id="editSurname" v-model="editForm.type">
+                  <option v-for="option in vehicleTypes" :key="option._id" :value="option._id">
+                    {{ option.name }}
+                  </option>
+                </select>
               </div>
               <div class="btn-group" role="group">
                 <button type="button" class="btn btn-primary btn-sm" @click="handleEditSubmit">Submit</button>
@@ -139,6 +141,7 @@ export default {
         },
         {
           field: 'after',
+          width: '85px'
         },
       ],
       activeAddModal: false,
@@ -146,18 +149,21 @@ export default {
       addForm: {
         plate: '',
         model: '',
-        number: ''
+        number: '',
+        type: ''
       },
-      rows: [],
+      vehiclesList: [],
       editForm: {
         id: '',
         plate: '',
         model: '',
-        number: ''
+        number: '',
+        type: ''
       },
       alertMessage: '',
       alertMessageType: 0,
       showMessage: false,
+      vehicleTypes: []
     };
   },
   components: {
@@ -183,7 +189,9 @@ export default {
     getData() {
       VehiclesDataService.getAll()
         .then(response => {
-          this.rows = response.data;
+          this.vehiclesList = response.data.vehicles;
+          this.vehicleTypes = response.data.vehicleTypes;
+
           console.log(response.data);
         })
         .catch(e => {
@@ -208,16 +216,18 @@ export default {
     },
     handleEditSubmit() {
       this.toggleEditModal(null);
-      this.updateItem(this.editForm, this.editForm._id);
+      this.updateItem(this.editForm, this.editForm.id);
     },
     initForm() {
       this.addForm.number = '';
       this.addForm.plate = '';
       this.addForm.model = '';
-      this.editForm._id = '';
+      this.addForm.type = '';
+      this.editForm.id = '';
       this.editForm.number = '';
       this.editForm.plate = '';
       this.editForm.model = '';
+      this.editForm.type = '';
     },
     removeItem(itemID) {
       VehiclesDataService.delete(itemID)
@@ -246,7 +256,11 @@ export default {
     },
     toggleEditModal(item) {
       if (item) {
-        this.editForm = item;
+        this.editForm.id = item._id;
+        this.editForm.number = item.number;
+        this.editForm.plate = item.plate;
+        this.editForm.model = item.model;
+        this.editForm.type = item.type._id;
       }
       const body = document.querySelector('body');
       this.activeEditModal = !this.activeEditModal;

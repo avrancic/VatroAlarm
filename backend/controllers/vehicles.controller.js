@@ -18,42 +18,39 @@ exports.create = (req, res) => {
     return;
   }
 
-  db.vehicle_Type.findOne({ name: req.body.type })
-  .then(item => {
-    new db.vehicle({
-      number: req.body.number,
-      plate: req.body.plate,
-      model: req.body.model,
-      type: item._id
-    }).save()
-      .then(() => {
-        return res.status(200).send({ message: "Created!" });
-      })
-      .catch(err => {
-        return res.status(500).send({ message: "Cannot be createed!" });
-      })
-  })
-  .catch(err => {
-    return res.status(500).send({ message: "Cannot be createed!" });
-  }) 
+  new db.vehicle({
+    number: req.body.number,
+    plate: req.body.plate,
+    model: req.body.model,
+    type: req.body.type
+  }).save()
+    .then(() => {
+      return res.status(200).send({ message: "Created!" });
+    })
+    .catch(err => {
+      return res.status(500).send({ message: "Cannot be createed!" });
+    })
 };
 
 exports.findAll = (req, res) => {
-  const plate = req.query.plate;
+  const vehicles = db.vehicle.find().populate('type')
+  const vehicleTypes = db.vehicle_Type.find()
 
-  var condition = plate ? { plate: { $regex: new RegExp(plate), $options: "i" } } : {};
+  Promise.all([vehicles, vehicleTypes]).then((returnedValues) => {
+    const [vehiclesResult, vehicleTypesResult] = returnedValues;
 
-  db.vehicle.find(condition)
-    .populate('type')
-    .then(data => {
-      res.send(data);
+    if (vehiclesResult == null || vehicleTypesResult == null) {
+      res.status(500).send({ message: "Error." });
+      return;
+    }
+
+    res.status(200).send({
+      vehicles: vehiclesResult,
+      vehicleTypes: vehicleTypesResult
     })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving vehicles."
-      });
-    });
+  }).catch((error) => {
+    console.log(error)
+  });
 };
 
 exports.update = (req, res) => {
@@ -65,7 +62,7 @@ exports.update = (req, res) => {
 
   const id = req.params.id;
 
-  db.vehicle.findByIdAndUpdate(id, req.body, { useFindAndModify: false , runValidators: true})
+  db.vehicle.findByIdAndUpdate(id, req.body, { useFindAndModify: false, runValidators: true })
     .then(data => {
       if (!data) {
         res.status(404).send({

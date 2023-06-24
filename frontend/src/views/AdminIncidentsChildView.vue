@@ -8,12 +8,12 @@
                 <button type="button" class="btn btn-success btn-sm" @click="toggleAddModal">Add incident</button>
                 <br><br>
                 <vue-good-table :rows="incidents" :columns="columns"
-                    :pagination-options="{ enabled: true, mode: 'records' }">>
+                    :pagination-options="{ enabled: true, mode: 'records' }">
                     <template #table-row="props">
                         <span v-if="props.column.field == 'after'">
                             <button type="button" class="btn btn-warning btn-sm me-1"
                                 @click="toggleEditModal(props.row)">E</button>
-                                
+
                             <button type="button" class="btn btn-danger btn-sm"
                                 @click="handleDeleteItem(props.row)">D</button>
                         </span>
@@ -98,7 +98,7 @@
                     <div class="modal-header">
                         <h5 class="modal-title">Update</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                            @click="toggleEditModal">
+                            @click="toggleEditModal(null)">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -282,7 +282,7 @@ export default {
         employeesFn(value) {
             var out = "";
             var first = true;
-            
+
             for (const item in value) {
                 if (!first) out += ", "
 

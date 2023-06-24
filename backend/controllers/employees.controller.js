@@ -14,19 +14,13 @@ exports.create = (req, res) => {
     return;
   }
 
-  db.employee_type.findOne({ name: req.body.type })
-    .then(item => {
-      new db.employee({
-        name: req.body.name,
-        surname: req.body.surname,
-        type: item._id
-      }).save()
-        .then(() => {
-          return res.status(200).send({ message: "Created!" });
-        })
-        .catch(err => {
-          return res.status(500).send({ message: "Cannot be createed!" });
-        })
+  new db.employee({
+    name: req.body.name,
+    surname: req.body.surname,
+    type: req.body.type
+  }).save()
+    .then(() => {
+      return res.status(200).send({ message: "Created!" });
     })
     .catch(err => {
       return res.status(500).send({ message: "Cannot be createed!" });
@@ -68,22 +62,11 @@ exports.update = (req, res) => {
 
   const id = req.params.id;
 
-  const employeeType = db.employee_type.findOne({ name: req.body.type })
-
-  Promise.all([employeeType]).then((returnedValues) => {
-    const [employeeTypeResult] = returnedValues;
-
-    if (employeeTypeResult == null) {
-      res.status(500).send({ message: "Error." });
-
-      return;
-    }
-
-    db.employee.findByIdAndUpdate(id, {
-      name: req.body.name,
-      surname: req.body.surname,
-      type: employeeTypeResult._id
-    }, { useFindAndModify: false, runValidators: true })
+  db.employee.findByIdAndUpdate(id, {
+    name: req.body.name,
+    surname: req.body.surname,
+    type: req.body.type
+  }, { useFindAndModify: false, runValidators: true })
     .then(data => {
       if (!data) {
         res.status(404).send({
@@ -96,7 +79,6 @@ exports.update = (req, res) => {
         message: "Error updating item with id=" + id
       });
     });
-  })
 };
 
 exports.delete = (req, res) => {
