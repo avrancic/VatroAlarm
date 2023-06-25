@@ -46,8 +46,6 @@ export default {
         drawstart(event) {
             this.vectors.source.removeFeature(this.drawedMarker);
             this.drawedMarker = event.feature;
-
-            console.log(event.feature)
         },
         outputData(event) {
             MapDataService.get(event.feature.getGeometry().getCoordinates())
@@ -58,18 +56,14 @@ export default {
                         cityName: response.data.address.town,
                         streetName: response.data.address.road + ' ' + response.data.address.house_number
                     })
-
-                    console.log(response);
                 })
-                .catch(error => {
+                .catch(() => {
                     this.$emit('PickedLocation', {
                         latitude: event.feature.getGeometry().getCoordinates()[0],
                         longitude: event.feature.getGeometry().getCoordinates()[1],
                         cityName: "",
                         streetName: ""
                     })
-
-                    console.log(error);
                 });
         }
     }
