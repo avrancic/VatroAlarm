@@ -38,14 +38,17 @@
                     <div class="modal-body">
                         <form>
                             <div class="mb-3">
-                                <label class="form-label">Ends at:</label>
-
-                                <VueDatePicker text-input v-model="addForm.ends_at" />
-                            </div>
-                            <div class="mb-3">
                                 <label class="form-label">Employees:</label>
                                 <multiselect :multiple="true" v-model="addForm.employees" :options="employees"
                                     :custom-label="({ name, surname, type }) => `${name} ${surname} (${type.name})`" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="addStatus" class="form-label">Status:</label>
+                                <select class="form-control" id="addStatus" v-model="addForm.status">
+                                    <option v-for="option in incidentStatuses" :key="option._id" :value="option._id">
+                                        {{ option.name }}
+                                    </option>
+                                </select>
                             </div>
                             <div class="btn-group" role="group">
                                 <button type="button" class="btn btn-primary btn-sm me-1"
@@ -53,7 +56,6 @@
                                 <button type="button" class="btn btn-danger btn-sm" @click="handleAddCancel">Cancel</button>
                             </div>
                         </form>
-
                     </div>
                 </div>
             </div>
@@ -76,15 +78,19 @@
                     <div class="modal-body">
                         <form>
                             <div class="mb-3">
-                                <label class="form-label">Shift ends at:</label>
-
-                                <VueDatePicker text-input v-model="editForm.ends_at" />
-                            </div>
-                            <div class="mb-3">
                                 <label class="form-label">Employees:</label>
                                 <multiselect :multiple="true" v-model="editForm.employees" :options="employees"
                                     track-by="_id"
                                     :custom-label="({ name, surname, type }) => `${name} ${surname} (${type.name})`" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="editStatus" class="form-label">Status:</label>
+
+                                <select class="form-control" id="editStatus" v-model="editForm.status">
+                                    <option v-for="option in incidentStatuses" :key="option._id" :value="option._id">
+                                        {{ option.name }}
+                                    </option>
+                                </select>
                             </div>
                             <div class="btn-group" role="group">
                                 <button type="button" class="btn btn-primary btn-sm me-1"
@@ -110,7 +116,7 @@ export default {
         return {
             columns: [
                 {
-                    label: 'Starting',
+                    label: 'Created',
                     field: 'started_at',
                     type: 'date',
                     dateInputFormat: 'yyyy-MM-dd\'T\'HH:mm:ss.SSSSSSXXX',
@@ -119,7 +125,7 @@ export default {
                     thClass: 'vgt-left-align'
                 },
                 {
-                    label: 'Ending',
+                    label: 'Ended',
                     field: 'ends_at',
                     type: 'date',
                     dateInputFormat: 'yyyy-MM-dd\'T\'HH:mm:ss.SSSSSSXXX',
@@ -133,6 +139,11 @@ export default {
                     field: 'employees',
                     placeholder: 'Employees',
                     formatFn: this.employeesFn
+                },
+                {
+                    label: 'Status',
+                    type: 'String',
+                    field: 'status',
                 },
                 {
                     field: 'after',

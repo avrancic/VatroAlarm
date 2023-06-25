@@ -1,13 +1,12 @@
 module.exports = mongoose => {
     var schema = mongoose.Schema(
         {
-            started_at: {
+            created_at: {
                 type: Date,
                 required: true
             },
-            ends_at: {
-                type: Date,
-                required: true
+            ended_at: {
+                type: Date
             },
             employees: [{
                 type: mongoose.Schema.Types.ObjectId,
