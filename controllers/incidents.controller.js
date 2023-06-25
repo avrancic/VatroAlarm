@@ -10,7 +10,7 @@ exports.create = (req, res) => {
         latitude: req.body.latitude,
         longitude: req.body.longitude,
         vehicles: req.body.vehicles.map(a => a._id),
-        employees: req.body.employees.map(a => a._id),
+        shifts: req.body.shifts.map(a => a._id),
         status: req.body.status,
     }).save()
         .then(() => {
@@ -22,30 +22,31 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-    const incidentList = db.incident.find().populate('type').populate('vehicles').populate('employees').populate('status')
-    const incidentTypesList = db.incident_type.find()
-    const incidentStatusList = db.incident_status.find()
+    const incidents = db.incident.find().populate('type').populate('vehicles').populate('shifts').populate({ path: 'shifts', populate: { path: 'employees', populate: { path: 'type' } } })
+        .populate('status')
+    const incidentTypes = db.incident_type.find()
+    const incidentStatuses = db.incident_status.find()
 
-    const employeesList = db.employee.find().populate("type")
-    const vehicleList = db.vehicle.find().populate("type")
+    const Shifts = db.shift.find().populate("employees")
+    const vehicles = db.vehicle.find().populate("type")
 
-    Promise.all([incidentList, incidentTypesList, incidentStatusList, employeesList, vehicleList]).then((returnedValues) => {
-        const [incidentListResult, incidentTypesListResult, incidentStatusListResult, employeesListResult, vehicleListResult] = returnedValues;
+    Promise.all([incidents, incidentTypes, incidentStatuses, Shifts, vehicles]).then((returnedValues) => {
+        const [incidents, incidentTypes, incidentStatuses, Shifts, vehicles] = returnedValues;
 
-        if (incidentListResult == null || incidentTypesListResult == null || incidentStatusListResult == null || employeesListResult == null || vehicleListResult == null) {
+        if (incidents == null || incidentTypes == null || incidentStatuses == null || Shifts == null || vehicles == null) {
             res.status(500).send({ message: "Error." });
             return;
         }
 
-        res.status(200).send({
-            incidents: incidentListResult,
-            incidentTypeList: incidentTypesListResult,
-            incidentStatusList: incidentStatusListResult,
-            employeesList: employeesListResult,
-            vehicleList: vehicleListResult
+        return res.status(200).send({
+            incidents: incidents,
+            incidentTypes: incidentTypes,
+            incidentStatuses: incidentStatuses,
+            shifts: Shifts,
+            vehicles: vehicles
         })
     }).catch((error) => {
-        console.log(error)
+        return res.status(500).send({ message: error });
     });
 };
 
@@ -60,18 +61,18 @@ exports.update = (req, res) => {
         longitude: req.body.longitude,
         type: req.body.type,
         vehicles: req.body.vehicles.map(a => a._id),
-        employees: req.body.employees.map(a => a._id),
+        shifts: req.body.shifts.map(a => a._id),
         status: req.body.status,
     }, { useFindAndModify: false, runValidators: true })
         .then(data => {
             if (!data) {
-                res.status(404).send({
+                return res.status(404).send({
                     message: `Cannot update item with id=${id}.`
                 });
             } else res.send({ message: "Item updated successfully." });
         })
         .catch(err => {
-            res.status(500).send({
+            return res.status(500).send({
                 message: "Error updating item with id=" + id
             });
         });
@@ -84,17 +85,17 @@ exports.delete = (req, res) => {
     db.incident.findByIdAndRemove(id)
         .then(data => {
             if (!data) {
-                res.status(404).send({
+                return res.status(404).send({
                     message: `Cannot delete item with id=${id}.`
                 });
             } else {
-                res.send({
+                return res.send({
                     message: "Item was deleted successfully!"
                 });
             }
         })
         .catch(err => {
-            res.status(500).send({
+            return res.status(500).send({
                 message: "Could not delete item with id=" + id
             });
         });

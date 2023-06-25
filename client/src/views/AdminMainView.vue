@@ -11,6 +11,9 @@
                 <li>
                     <RouterLink :to="{ name: 'AdminIncidents' }">Incidents</RouterLink>
                 </li>
+                <li>
+                    <RouterLink :to="{ name: 'AdminShifts' }">Shifts</RouterLink>
+                </li>
 
                 <br>
 

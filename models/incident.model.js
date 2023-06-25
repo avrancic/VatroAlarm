@@ -37,9 +37,9 @@ module.exports = mongoose => {
         ref: "Vehicle",
         required: true
       }],
-      employees: [{
+      shifts: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Employee",
+        ref: "Shift",
         required: true
       }],
       status: {

@@ -43,7 +43,7 @@
                             <div class="mb-3">
                                 <label for="addType" class="form-label">Type:</label>
                                 <select class="form-control" id="addType" v-model="addForm.type">
-                                    <option v-for="option in incidentTypeList" :key="option._id" :value="option._id">
+                                    <option v-for="option in incidentTypes" :key="option._id" :value="option._id">
                                         {{ option.name }}
                                     </option>
                                 </select>
@@ -66,19 +66,18 @@
                             <div class="mb-3">
                                 <label for="addVehicles" class="form-label">Vehicles:</label>
                                 <multiselect :multiple="true" id="addVehicles" v-model="addForm.vehicles"
-                                    :options="vehicleList"
+                                    :options="vehicles"
                                     :custom-label="({ plate, model, number }) => `${number} - ${plate} (${model})`" />
                             </div>
                             <div class="mb-3">
-                                <label for="addEmployees" class="form-label">Employees:</label>
-                                <multiselect :multiple="true" id="addEmployees" v-model="addForm.employees"
-                                    :options="employeesList"
-                                    :custom-label="({ name, surname, type }) => `${name} ${surname} (${type.name})`" />
+                                <label for="addEmployees" class="form-label">Shifts:</label>
+                                <multiselect :multiple="true" id="addEmployees" v-model="addForm.shifts" :options="shifts" track-by="_id"
+                                    :custom-label="({ ends_at }) => `${ends_at}`" />
                             </div>
                             <div class="mb-3">
                                 <label for="addStatus" class="form-label">Status:</label>
                                 <select class="form-control" id="addStatus" v-model="addForm.status">
-                                    <option v-for="option in incidentStatusList" :key="option._id" :value="option._id">
+                                    <option v-for="option in incidentStatuses" :key="option._id" :value="option._id">
                                         {{ option.name }}
                                     </option>
                                 </select>
@@ -115,7 +114,7 @@
                             <div class="mb-3">
                                 <label for="editType" class="form-label">Type:</label>
                                 <select class="form-control" id="editType" v-model="editForm.type">
-                                    <option v-for="option in incidentTypeList" :key="option._id" :value="option._id">
+                                    <option v-for="option in incidentTypes" :key="option._id" :value="option._id">
                                         {{ option.name }}
                                     </option>
                                 </select>
@@ -139,21 +138,20 @@
                             <div class="mb-3">
                                 <label for="editVehicles" class="form-label">Vehicles:</label>
                                 <multiselect :multiple="true" id="editVehicles" v-model="editForm.vehicles"
-                                    :options="vehicleList"
+                                    :options="vehicles" track-by="_id"
                                     :custom-label="({ plate, model, number }) => `${number} - ${plate} (${model})`" />
 
                             </div>
                             <div class="mb-3">
-                                <label for="editEmployees" class="form-label">Employees:</label>
-                                <multiselect :multiple="true" id="editEmployees" v-model="editForm.employees"
-                                    :options="employeesList"
-                                    :custom-label="({ name, surname, type }) => `${name} ${surname} (${type.name})`" />
+                                <label for="editEmployees" class="form-label">Shifts:</label>
+                                <multiselect :multiple="true" id="editEmployees" v-model="editForm.shifts" :options="shifts"
+                                    :custom-label="({ ends_at }) => `${ends_at}`" track-by="_id"/>
                             </div>
                             <div class="mb-3">
                                 <label for="editStatus" class="form-label">Type:</label>
 
                                 <select class="form-control" id="editStatus" v-model="editForm.status">
-                                    <option v-for="option in incidentStatusList" :key="option._id" :value="option._id">
+                                    <option v-for="option in incidentStatuses" :key="option._id" :value="option._id">
                                         {{ option.name }}
                                     </option>
                                 </select>
@@ -181,10 +179,8 @@ import Map from '@/components/AdminIncidentMap.vue';
 export default {
     data() {
         return {
-            vehicleList: [
-            ],
-            employeesList: [
-            ],
+            vehicles: [],
+            shifts: [],
             columns: [
                 {
                     label: 'Created',
@@ -218,16 +214,14 @@ export default {
                     filterable: true,
                     placeholder: 'Vehicles',
                     formatFn: this.vehicleFn,
-
                 },
                 {
                     label: 'Employees',
                     type: 'String',
-                    field: 'employees',
+                    field: 'shifts',
                     filterable: true,
-                    placeholder: 'Employees',
-                    formatFn: this.employeesFn,
-
+                    placeholder: 'Shifts',
+                    formatFn: this.shiftsFn,
                 },
                 {
                     label: 'Status',
@@ -248,7 +242,7 @@ export default {
                 latitude: 0,
                 longitude: 0,
                 vehicles: [],
-                employees: [],
+                shifts: [],
                 status: ''
             },
             incidents: [],
@@ -261,15 +255,15 @@ export default {
                 latitude: 0,
                 longitude: 0,
                 vehicles: [],
-                employees: [],
+                shifts: [],
                 status: ''
             },
             alertMessage: '',
             alertMessageType: 1,
             showMessage: false,
-            incidentTypeList: [
+            incidentTypes: [
             ],
-            incidentStatusList: [
+            incidentStatuses: [
             ]
         };
     },
@@ -292,16 +286,21 @@ export default {
 
             return out;
         },
-        employeesFn(value) {
+        shiftsFn(value) {
             var out = "";
+
             var first = true;
 
             for (const item in value) {
-                if (!first) out += ", "
+                for (const item1 in value[item].employees) {
+                    if (!first) out += ", "
 
-                out += value[item].name + ' ' + value[item].surname;
+                    out += value[item].employees[item1].name + ' ';
+                    out += value[item].employees[item1].surname + ' ';
+                    out += ' (' + value[item].employees[item1].type.name + ')';
 
-                first = false;
+                    first = false;
+                }
             }
 
             return out;
@@ -329,11 +328,11 @@ export default {
             IncidentsDataService.getAll()
                 .then(response => {
                     this.incidents = response.data.incidents;
-                    this.incidentTypeList = response.data.incidentTypeList;
-                    this.incidentStatusList = response.data.incidentStatusList;
+                    this.incidentTypes = response.data.incidentTypes
+                    this.incidentStatuses = response.data.incidentStatuses;
 
-                    this.employeesList = response.data.employeesList;
-                    this.vehicleList = response.data.vehicleList;
+                    this.shifts = response.data.shifts;
+                    this.vehicles = response.data.vehicles;
                 })
                 .catch(e => {
                     console.log(e);
@@ -367,7 +366,7 @@ export default {
                 this.addForm.latitude = 0,
                 this.addForm.longitude = 0,
                 this.addForm.vehicles = [],
-                this.addForm.employees = [],
+                this.addForm.shifts = [],
                 this.addForm.status = ''
             this.editForm.id = '';
             this.editForm.type = '',
@@ -377,7 +376,7 @@ export default {
                 this.editForm.latitude = 0,
                 this.editForm.longitude = 0,
                 this.editForm.vehicles = [],
-                this.editForm.employees = [],
+                this.editForm.shifts = [],
                 this.editForm.status = ''
         },
         removeItem(itemID) {
@@ -415,7 +414,7 @@ export default {
                 this.editForm.latitude = item.latitude;
                 this.editForm.longitude = item.longitude;
                 this.editForm.vehicles = item.vehicles;
-                this.editForm.employees = item.employees;
+                this.editForm.shifts = item.shifts;
                 this.editForm.status = item.status._id;
             }
             const body = document.querySelector('body');

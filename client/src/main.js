@@ -10,10 +10,13 @@ import map from 'vue3-openlayers'
 import store from './store/index';
 import VueGoodTablePlugin from 'vue-good-table-next';
 import Multiselect from 'vue-multiselect'
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
 createApp(App)
     .use(router)
     .use(store)
     .component('multiselect', Multiselect)
+    .component('VueDatePicker', VueDatePicker)
     .use(VueGoodTablePlugin)
     .use(map).mount('#app')
