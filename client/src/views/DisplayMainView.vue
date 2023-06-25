@@ -176,7 +176,7 @@ export default {
     }
   },
   created() {
-    const socket = io(`http://localhost/api/socket`);
+    const socket = io(process.env.NODE_ENV === 'development' ? 'http://localhost:3000/api/socket' : '/api/socket');
 
     socket.on("displayNewData", (items) => {
       if (items != null) {
