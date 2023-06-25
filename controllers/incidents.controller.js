@@ -27,15 +27,14 @@ exports.findAll = (req, res) => {
     const incidentTypes = db.incident_type.find()
     const incidentStatuses = db.incident_status.find()
 
-    const Shifts = db.shift.find().populate("employees")
+    const Shifts = db.shift.find({ends_at : { $gte: new Date() }}).populate("employees")
     const vehicles = db.vehicle.find().populate("type")
 
     Promise.all([incidents, incidentTypes, incidentStatuses, Shifts, vehicles]).then((returnedValues) => {
         const [incidents, incidentTypes, incidentStatuses, Shifts, vehicles] = returnedValues;
 
         if (incidents == null || incidentTypes == null || incidentStatuses == null || Shifts == null || vehicles == null) {
-            res.status(500).send({ message: "Error." });
-            return;
+            return res.status(500).send({ message: "Error." });
         }
 
         return res.status(200).send({
@@ -85,18 +84,12 @@ exports.delete = (req, res) => {
     db.incident.findByIdAndRemove(id)
         .then(data => {
             if (!data) {
-                return res.status(404).send({
-                    message: `Cannot delete item with id=${id}.`
-                });
+                return res.status(404).send({ message: "Cannot delete." });
             } else {
-                return res.send({
-                    message: "Item was deleted successfully!"
-                });
+                return res.send({ message: "Deleted successfully!" });
             }
         })
-        .catch(err => {
-            return res.status(500).send({
-                message: "Could not delete item with id=" + id
-            });
+        .catch(() => {
+            return res.status(500).send({ message: "Cannot delete" });
         });
 };

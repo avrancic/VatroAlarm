@@ -3,21 +3,20 @@ import http from "@/http-common";
 class AuthService {
   login(user) {
     return http
-      .post('/api/users/login', {
+      .post('/api/auth/login', {
         username: user.username,
         password: user.password
       })
       .then(response => {
-        if (response.data.accessToken) {
-          localStorage.setItem('user', JSON.stringify(response.data));
+        if (response.data.token) {
+          localStorage.setItem('jwl', response.data.token);
         }
 
-        return response.data;
+        return response.data.token;
       });
   }
-
   logout() {
-    localStorage.removeItem('user');
+    localStorage.removeItem('jwl');
   }
 }
 

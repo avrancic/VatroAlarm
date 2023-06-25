@@ -48,7 +48,7 @@
                                     :custom-label="({ name, surname, type }) => `${name} ${surname} (${type.name})`" />
                             </div>
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-primary btn-sm"
+                                <button type="button" class="btn btn-primary btn-sm me-1"
                                     @click="handleAddSubmit">Submit</button>
                                 <button type="button" class="btn btn-danger btn-sm" @click="handleAddCancel">Cancel</button>
                             </div>
@@ -87,7 +87,7 @@
                                     :custom-label="({ name, surname, type }) => `${name} ${surname} (${type.name})`" />
                             </div>
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-primary btn-sm"
+                                <button type="button" class="btn btn-primary btn-sm me-1"
                                     @click="handleEditSubmit">Submit</button>
                                 <button type="button" class="btn btn-danger btn-sm"
                                     @click="handleEditCancel">Cancel</button>

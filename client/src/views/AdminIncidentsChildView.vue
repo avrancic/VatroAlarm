@@ -70,9 +70,9 @@
                                     :custom-label="({ plate, model, number }) => `${number} - ${plate} (${model})`" />
                             </div>
                             <div class="mb-3">
-                                <label for="addEmployees" class="form-label">Shifts:</label>
-                                <multiselect :multiple="true" id="addEmployees" v-model="addForm.shifts" :options="shifts" track-by="_id"
-                                    :custom-label="({ ends_at }) => `${ends_at}`" />
+                                <label for="addShifts" class="form-label">Shifts:</label>
+                                <multiselect :multiple="true" id="addShifts" v-model="addForm.shifts" :options="shifts"
+                                    track-by="_id" :custom-label="shiftsLabel" />
                             </div>
                             <div class="mb-3">
                                 <label for="addStatus" class="form-label">Status:</label>
@@ -83,7 +83,7 @@
                                 </select>
                             </div>
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-primary btn-sm"
+                                <button type="button" class="btn btn-primary btn-sm me-1"
                                     @click="handleAddSubmit">Submit</button>
                                 <button type="button" class="btn btn-danger btn-sm" @click="handleAddReset">Reset</button>
                             </div>
@@ -145,7 +145,7 @@
                             <div class="mb-3">
                                 <label for="editEmployees" class="form-label">Shifts:</label>
                                 <multiselect :multiple="true" id="editEmployees" v-model="editForm.shifts" :options="shifts"
-                                    :custom-label="({ ends_at }) => `${ends_at}`" track-by="_id"/>
+                                :custom-label="shiftsLabel" track-by="_id" />
                             </div>
                             <div class="mb-3">
                                 <label for="editStatus" class="form-label">Type:</label>
@@ -157,7 +157,7 @@
                                 </select>
                             </div>
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-primary btn-sm"
+                                <button type="button" class="btn btn-primary btn-sm me-1"
                                     @click="handleEditSubmit">Submit</button>
                                 <button type="button" class="btn btn-danger btn-sm"
                                     @click="handleEditCancel">Cancel</button>
@@ -272,6 +272,27 @@ export default {
         Map
     },
     methods: {
+        shiftsLabel({started_at, ends_at, employees}) {
+            var out = "";
+
+            out += `${started_at} -> ${ends_at}`;
+         
+            out += " ("
+
+            var first = true;
+
+            for (const item in employees) {
+                if (!first) out += ", "
+
+                out += employees[item].name + ' ' + employees[item].name;
+
+                first = false;
+            }
+            
+            out += ")"
+
+            return out;
+        },
         vehicleFn(value) {
             var out = "";
             var first = true;

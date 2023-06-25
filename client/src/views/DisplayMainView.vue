@@ -40,7 +40,7 @@ export default {
     }
   },
   created() {
-    const socket = io(`/api/socket`);
+    const socket = io(`http://localhost/api/socket`);
 
     socket.on("displayNewData", (items) => {
       this.incidents = items;

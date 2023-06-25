@@ -13,7 +13,7 @@ import AdminShiftsChildView from '@/views/AdminShiftsChildView.vue'
 const authGuard = (to, from, next) => {
   const publicPages = ['/login'];
   const authRequired = !publicPages.includes(to.path);
-  const loggedIn = localStorage.getItem('user');
+  const loggedIn = localStorage.getItem('jwl');
 
   if (authRequired && !loggedIn) {
     next('/login');

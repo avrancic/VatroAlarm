@@ -1,23 +1,6 @@
 const db = require("../models");
 
 exports.create = (req, res) => {
-  if (!req.body.number) {
-    res.status(400).send({ message: "Number can not be empty!" });
-    return;
-  }
-  if (!req.body.plate) {
-    res.status(400).send({ message: "Plate can not be empty!" });
-    return;
-  }
-  if (!req.body.model) {
-    res.status(400).send({ message: "Model can not be empty!" });
-    return;
-  }
-  if (!req.body.type) {
-    res.status(400).send({ message: "Type can not be empty!" });
-    return;
-  }
-
   new db.vehicle({
     number: req.body.number,
     plate: req.body.plate,
@@ -40,11 +23,10 @@ exports.findAll = (req, res) => {
     const [vehiclesResult, vehicleTypesResult] = returnedValues;
 
     if (vehiclesResult == null || vehicleTypesResult == null) {
-      res.status(500).send({ message: "Error." });
-      return;
+      return res.status(500).send({ message: "Error." });
     }
 
-    res.status(200).send({
+    return res.status(200).send({
       vehicles: vehiclesResult,
       vehicleTypes: vehicleTypesResult
     })
@@ -54,24 +36,18 @@ exports.findAll = (req, res) => {
 };
 
 exports.update = (req, res) => {
-  if (!req.body) {
-    return res.status(400).send({
-      message: "Data to update can not be empty!"
-    });
-  }
-
   const id = req.params.id;
 
   db.vehicle.findByIdAndUpdate(id, req.body, { useFindAndModify: false, runValidators: true })
     .then(data => {
       if (!data) {
-        res.status(404).send({
+        return res.status(404).send({
           message: `Cannot update vehicle with id=${id}.`
         });
       } else res.send({ message: "Vehicle updated successfully." });
     })
     .catch(err => {
-      res.status(500).send({
+      return res.status(500).send({
         message: "Error updating vehicles with id=" + id
       });
     });
@@ -80,21 +56,24 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  db.vehicle.findByIdAndRemove(id)
-    .then(data => {
-      if (!data) {
-        res.status(404).send({
-          message: `Cannot delete vehicle with id=${id}.`
+  db.incident.findOne({ vehicles: id }).then(data => {
+    if (!data) {
+      db.vehicle.findByIdAndRemove(id)
+        .then(data => {
+          if (!data) {
+            return res.status(404).send({ message: "Cannot delete." });
+          } else {
+            return res.send({ message: "Deleted successfully!" });
+          }
+        })
+        .catch(() => {
+          return res.status(500).send({ message: "Cannot delete" });
         });
-      } else {
-        res.send({
-          message: "Vehicle was deleted successfully!"
-        });
-      }
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Could not delete vehicle with id=" + id
-      });
+    } else {
+      return res.status(500).send({ message: "Cannot delete because is used somewhere." });
+    }
+  })
+    .catch(() => {
+      return res.status(500).send({ message: "Cannot delete" });
     });
 };

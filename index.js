@@ -37,6 +37,7 @@ app.use(history({
 // 2nd call for redirected requests
 app.use(staticFileMiddleware);
 
+require("./routes/auth.route")(app);
 require("./routes/users.route")(app);
 require("./routes/vehicles.route")(app);
 require("./routes/incidents.route")(app);

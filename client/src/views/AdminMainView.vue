@@ -17,13 +17,13 @@
 
                 <br>
 
-                <li>
+                <li v-if="isAdmin">
                     <RouterLink :to="{ name: 'AdminSettingsVehicles' }">Vehicles list</RouterLink>
                 </li>
-                <li>
+                <li v-if="isAdmin">
                     <RouterLink :to="{ name: 'AdminSettingsEmployees' }">Employees list</RouterLink>
                 </li>
-                <li>
+                <li v-if="isAdmin">
                     <RouterLink :to="{ name: 'AdminSettingsUsers' }">Users</RouterLink>
                 </li>
             </ul>
@@ -66,7 +66,14 @@ export default {
     }),
     computed: {
         currentUser() {
-            return this.$store.state.auth.user;
+            if (this.$store.state.auth.data == null) return;
+
+            return this.$store.state.auth.data;
+        },
+        isAdmin() {
+            if (this.$store.state.auth.data == null) return false;
+
+            return this.$store.state.auth.data.role.name == "admin";
         }
     },
     methods: {

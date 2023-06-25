@@ -58,22 +58,25 @@ exports.update = (req, res) => {
 
 exports.delete = (req, res) => {
     const id = req.params.id;
-
-    db.shift.findByIdAndRemove(id)
-        .then(data => {
-            if (!data) {
-                res.status(404).send({
-                    message: `Cannot delete item with id=${id}.`
-                });
-            } else {
-                res.send({
-                    message: "Item was deleted successfully!"
-                });
-            }
+   
+    db.incident.findOne({shifts: id}).then(data => {
+        if (!data) {
+            db.shift.findByIdAndRemove(id)
+            .then(data => {
+                if (!data) {
+                  return res.status(404).send({ message: "Cannot delete." });
+                } else {
+                  return res.send({ message: "Deleted successfully!" });
+                }
+              })
+              .catch(() => {
+                return res.status(500).send({ message: "Cannot delete" });
+              });
+          } else {
+            return res.status(500).send({ message: "Cannot delete because is used somewhere." });
+          }
         })
-        .catch(err => {
-            res.status(500).send({
-                message: "Could not delete item with id=" + id
-            });
-        });
+          .catch(() => {
+            return res.status(500).send({ message: "Cannot delete" });
+          });
 };

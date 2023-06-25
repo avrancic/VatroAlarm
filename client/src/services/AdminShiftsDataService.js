@@ -1,28 +1,29 @@
 import http from "@/http-common";
+import auth from '@/services/AuthHeaderService';
 
 class AdminShiftsDataService {
   getAll() {
-    return http.get("/api/shifts");
+    return http.get("/api/shifts", { headers: auth() });
   }
 
   get(id) {
-    return http.get(`/api/shifts/${id}`);
+    return http.get(`/api/shifts/${id}`, { headers: auth() });
   }
 
   create(data) {
-    return http.post("/api/shifts", data);
+    return http.post("/api/shifts", data, { headers: auth() });
   }
 
   update(id, data) {
-    return http.put(`/api/shifts/${id}`, data);
+    return http.put(`/api/shifts/${id}`, data, { headers: auth() });
   }
 
   delete(id) {
-    return http.delete(`/api/shifts/${id}`);
+    return http.delete(`/api/shifts/${id}`, { headers: auth() });
   }
 
   deleteAll() {
-    return http.delete(`/api/shifts`);
+    return http.delete(`/api/shifts`, { headers: auth() });
   }
 }
 

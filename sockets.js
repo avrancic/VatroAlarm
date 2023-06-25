@@ -26,7 +26,7 @@ module.exports = server => {
     });
 
     function sendCanges() {
-        db.incident.find().populate('type').populate('vehicles').populate('employees').populate('status')
+        db.incident.find().populate('type').populate('vehicles').populate('shifts').populate('status')
             .then((value) => {
                 io.of("/api/socket").emit("displayNewData", value);
             }).catch((error) => {
