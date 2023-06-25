@@ -9,9 +9,7 @@ module.exports = server => {
         cors: corsOptions
     });
 
-    io.of(process.env.NODE_ENV === 'development'
-    ? 'http://localhost:3000/api/socket'
-    : '/api/socket').on("connection", (socket) => {
+    io.of('/api/socket').on("connection", (socket) => {
         console.log("socket.io: User connected: ", socket.id);
 
         socket.on("disconnect", () => {

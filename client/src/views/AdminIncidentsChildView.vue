@@ -148,7 +148,7 @@
                                 :custom-label="shiftsLabel" track-by="_id" />
                             </div>
                             <div class="mb-3">
-                                <label for="editStatus" class="form-label">Type:</label>
+                                <label for="editStatus" class="form-label">Status:</label>
 
                                 <select class="form-control" id="editStatus" v-model="editForm.status">
                                     <option v-for="option in incidentStatuses" :key="option._id" :value="option._id">
