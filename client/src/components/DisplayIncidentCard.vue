@@ -1,43 +1,18 @@
 <template>
     <div class="card card-margin">
         <div class="card-header no-border">
-            <h5 class="card-title">INCIDENT INFO</h5>
+            <h5 class="card-title">ACTIVE INCIDENT INFO</h5>
         </div>
         <div class="card-body p-0">
-            <IncidentMap :latitude="data.latitude" :longitude="data.longitude"></IncidentMap>
+            <IncidentMap :data="data"></IncidentMap>
         </div>
-        <div class="row m-l-0 m-r-0">
-                <div class="card-block">
-                    <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Information</h6>
-                    <div class="d-flex bd-highlight">
-                        <div class="p-2 flex-fill bd-highlight">
-                            <p class="m-b-10 f-w-600">Date</p>
-                            <h6 class="text-muted f-w-400">{{ data.created_at }}</h6>
-                        </div>
-                        <div class="p-2 flex-fill bd-highlight">
-                            <p class="m-b-10 f-w-600">Description</p>
-                            <h6 class="text-muted f-w-400">{{ data.description }}</h6>
-                        </div>
-                        <div class="p-2 flex-fill bd-highlight">
-                            <p class="m-b-10 f-w-600">Location</p>
-                            <h6 class="text-muted f-w-400">{{ data.city + ', ' + data.address }}</h6>
-                        </div>
-                        <div class="p-2 flex-fill bd-highlight">
-                            <p class="m-b-10 f-w-600">Type</p>
-                            <h6 class="text-muted f-w-400">{{ data.address }}</h6>
-                        </div>
-                    </div>
-                    <h6 class="m-b-20 m-t-40 p-b-5 b-b-default f-w-600">Projects</h6>
-                    <div class="d-flex bd-highlight">
-                        <div class="p-2 flex-fill bd-highlight">
-                            <p class="m-b-10 f-w-600">Vehicles</p>
-                            <h6 class="text-muted f-w-400">{{ data.Vehicles }}</h6>
-                        </div>
-                        <div class="p-2 flex-fill bd-highlight">
-                            <p class="m-b-10 f-w-600">Employees</p>
-                            <h6 class="text-muted f-w-400">{{ data.Employees }}</h6>
-                        </div>
-                    </div>
+        <div class="row m-l-0 m-r-0 overlay">
+            <div class="card-block">
+                <p><b>Location: </b> {{ data.city ? data.city : '' + ', ' + data.address ? data.address : '' }}</p>
+                <p><b>Description: </b> {{ data.description ? data.description : '' }}</p>
+                <p><b>Type: </b> {{ data.type ? data.type.name : '' }}</p>
+                <p><b>Vehicles: </b> {{ vehicles() }}</p>
+                <p><b>Employees: </b> {{ employees() }}</p>
             </div>
         </div>
     </div>
@@ -50,7 +25,21 @@ export default {
     props: ['data'],
     components: {
         IncidentMap
-    }
+    },
+    methods: {
+        employees: function () {
+            if (!this.data) return;
+            if (!this.data.shifts) return;
+
+            return this.data.shifts.map(a => a.employees.map(a => a.name + a.surname + ' (' + a.type.name + ')').join(', ')).join(', ')
+        },
+        vehicles: function () {
+            if (!this.data) return;
+            if (!this.data.vehicles) return;
+
+            return this.data.vehicles.map(a => a.plate + ' (' + a.type.name +')').join(', ')
+        }
+    },
 } 
 </script>
 
@@ -58,5 +47,14 @@ export default {
 .card {
     width: 100%;
     height: 100%;
+}
+
+.overlay {
+    position: absolute;
+    left: 40px;
+    bottom: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 30px;
 }
 </style>

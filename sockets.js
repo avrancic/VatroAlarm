@@ -39,7 +39,7 @@ module.exports = server => {
             match: {
                 name: 'Open'
             }
-        }).populate('type').populate('vehicles').populate({ path: 'shifts', populate: { path: 'employees', populate: { path: 'type' } } })
+        }).populate('type').populate({path: 'vehicles', populate: { path: 'type'}}).populate({ path: 'shifts', populate: { path: 'employees', populate: { path: 'type' } } })
 
         var vehicles = db.vehicle.find().populate('type')
 

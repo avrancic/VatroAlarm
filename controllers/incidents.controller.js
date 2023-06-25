@@ -23,7 +23,7 @@ exports.create = (req, res) => {
 
 exports.findAll = (req, res) => {
     const incidents = db.incident.find().populate('type').populate('vehicles').populate('shifts').populate({ path: 'shifts', populate: { path: 'employees', populate: { path: 'type' } } })
-        .populate('status')
+        .populate('status').sort( [['_id', -1]] )
     const incidentTypes = db.incident_type.find()
     const incidentStatuses = db.incident_status.find()
 

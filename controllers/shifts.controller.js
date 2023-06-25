@@ -14,7 +14,7 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-    const shifts = db.shift.find().populate({ path: 'employees', populate: { path: 'type' } })
+    const shifts = db.shift.find().populate({ path: 'employees', populate: { path: 'type' } }).sort( [['_id', -1]] )
     const employees = db.employee.find().populate("type")
 
     Promise.all([shifts, employees]).then((returnedValues) => {

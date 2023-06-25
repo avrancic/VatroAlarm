@@ -23,11 +23,11 @@ import { ref } from "vue";
 import markerIcon from "@/assets/marker.png";
 
 export default {
-    props: ['latitude', 'longitude'],
+    props: ['data'],
 
     data() {
         return {
-            center: ref([this.latitude, this.longitude]),
+            center: ref([13.639553292389696, 45.0831547052052]),
             projection: ref('EPSG:4326'),
             zoom: ref(15),
             rotation: ref(0),
@@ -35,5 +35,10 @@ export default {
             drawedMarker: ref()
         };
     },
+    watch: {
+        data() {
+            this.center = ref([this.data.latitude, this.data.longitude]);
+        }
+    }
 }
 </script>

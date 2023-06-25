@@ -272,13 +272,9 @@ export default {
         Map
     },
     methods: {
-        shiftsLabel({started_at, ends_at, employees}) {
+        shiftsLabel({employees}) {
             var out = "";
-
-            out += `${started_at} -> ${ends_at}`;
          
-            out += " ("
-
             var first = true;
 
             for (const item in employees) {
@@ -289,8 +285,6 @@ export default {
                 first = false;
             }
             
-            out += ")"
-
             return out;
         },
         vehicleFn(value) {

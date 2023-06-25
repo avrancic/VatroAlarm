@@ -88,15 +88,7 @@
       <div class="row flex-grow-1 m-4">
         <div class="d-flex align-content-stretch bd-highlight">
           <div class="flex-grow-1 bd-highlight me-5">
-            <carousel class="h-100" itemsToShow="1" :wrapAround="true" autoplay="20000">
-              <slide v-for="item in incidents" :key="item.id">
-                <IncidentCard :data="item"></IncidentCard>
-              </slide>
-
-              <template #addons>
-                <navigation />
-              </template>
-            </carousel>
+            <IncidentCard :data="currentData"></IncidentCard>
           </div>
 
           <div class="d-flex flex-column bd-highlight">
@@ -160,7 +152,7 @@
 
 <script>
 import 'vue3-carousel/dist/carousel.css'
-import { Carousel, Slide, Navigation } from 'vue3-carousel'
+//import { Carousel, Slide, Navigation } from 'vue3-carousel'
 import IncidentCard from '@/components/DisplayIncidentCard.vue'
 import io from "socket.io-client";
 
@@ -172,11 +164,13 @@ export default {
       vehiclesIn: [],
       vehiclestOut: [],
       incidents: [],
-      shiftsAvailable: []
+      shiftsAvailable: [],
+      currentData: [],
+      incidentIndex: 0
     }
   },
   created() {
-    const socket = io(process.env.NODE_ENV === 'development' ? 'http://localhost:3000/api/socket' : '/api/socket');
+    const socket = io(process.env.NODE_ENV === 'development' ? 'http://localhost/api/socket' : '/api/socket');
 
     socket.on("displayNewData", (items) => {
       if (items != null) {
@@ -186,20 +180,39 @@ export default {
         if (items.vehiclestOut != null) this.vehiclestOut = items.vehiclestOut;
         if (items.incidents != null) this.incidents = items.incidents;
         if (items.shiftsAvailable != null) this.shiftsAvailable = items.shiftsAvailable;
+
+        if (this.incidents && this.incidents.length != 0) {
+          this.incidentIndex = 0;
+          this.currentData = this.incidents[0];
+          console.log(this.currentData)
+        }
       }
     });
+
+    var test = this;
+
+    setInterval(function () {
+      try {
+        if (test.incidents && test.incidents.length != 0) {
+          if (test.incidentIndex > test.incidents.length -1) {
+            test.incidentIndex = 0
+          }
+
+          test.currentData = test.incidents[test.incidentIndex];
+
+          test.incidentIndex++;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }, 3000);
   },
   components: {
-    Carousel,
-    Slide,
-    Navigation,
+    //Carousel,
+    // Slide,
+    ///  Navigation,
     IncidentCard,
   },
-  methods: {
-    VehicleCount() {
-      return this.vehiclesIn.length;
-    }
-  }
 }
 </script>
 
@@ -213,12 +226,11 @@ export default {
 #wrapper {
   height: 100%;
   width: 100%;
-
+  background: #efefef;
 }
 
 body {
   overflow-x: hidden;
-  background: #efefef;
 }
 
 .carousel__viewport,
