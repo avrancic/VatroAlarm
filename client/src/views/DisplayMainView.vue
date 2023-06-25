@@ -14,8 +14,8 @@
                 </div>
                 <div class="col-6">
                   <div class="text-end">
-                    <h2 class="text-white mt-2">$<span data-plugin="counterup">92,847</span></h2>
-                    <p class="text-white mb-0 text-truncate">Test</p>
+                    <h2 class="text-white mt-2"><span data-plugin="counterup">{{ incidents.length }}</span></h2>
+                    <p class="text-white mb-0 text-truncate">Incidents active</p>
                   </div>
                 </div>
               </div> <!-- end row-->
@@ -34,8 +34,8 @@
                 </div>
                 <div class="col-6">
                   <div class="text-end">
-                    <h2 class="text-white mt-2"><span data-plugin="counterup">56</span>k</h2>
-                    <p class="text-white mb-0 text-truncate">Test</p>
+                    <h2 class="text-white mt-2"><span data-plugin="counterup">{{ shiftsAvailable.length }}</span></h2>
+                    <p class="text-white mb-0 text-truncate">shifts available</p>
                   </div>
                 </div>
               </div> <!-- end row-->
@@ -54,8 +54,9 @@
                 </div>
                 <div class="col-6">
                   <div class="text-end">
-                    <h2 class="text-white mt-2"><span data-plugin="counterup">2568</span></h2>
-                    <p class="text-white mb-0 text-truncate">Test</p>
+                    <h2 class="text-white mt-2"><span data-plugin="counterup">{{ this.employeesInShiftOut.length }}</span>
+                    </h2>
+                    <p class="text-white mb-0 text-truncate">Employees available</p>
                   </div>
                 </div>
               </div> <!-- end row-->
@@ -74,8 +75,8 @@
                 </div>
                 <div class="col-6">
                   <div class="text-end">
-                    <h2 class="text-white mt-2"><span data-plugin="counterup">523</span></h2>
-                    <p class="text-white mb-0 text-truncate">Test</p>
+                    <h2 class="text-white mt-2"><span data-plugin="counterup">{{ this.vehiclesIn.length }}</span></h2>
+                    <p class="text-white mb-0 text-truncate">Vehicles available</p>
                   </div>
                 </div>
               </div> <!-- end row-->
@@ -87,8 +88,8 @@
       <div class="row flex-grow-1 m-4">
         <div class="d-flex align-content-stretch bd-highlight">
           <div class="flex-grow-1 bd-highlight me-5">
-            <carousel class="h-100"  itemsToShow="1" :wrapAround="true" autoplay="20000"
->              <slide v-for="item in incidents" :key="item.id">
+            <carousel class="h-100" itemsToShow="1" :wrapAround="true" autoplay="20000">
+              <slide v-for="item in incidents" :key="item.id">
                 <IncidentCard :data="item"></IncidentCard>
               </slide>
 
@@ -100,99 +101,53 @@
 
           <div class="d-flex flex-column bd-highlight">
 
-              <div class="bd-highlight flex-grow-1 card mb-3">
-                <div class="card-header no-border">
-                  <h5 class="card-title">VEHICLES</h5>
-                </div>
-                <div class="card-body p-0">
-                  <div class="table-full-width">
-											<table class="table">
-												<tbody>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-												</tbody>
-											</table>
-										</div>
+            <div class="bd-highlight flex-grow-1 card mb-3">
+              <div class="card-header no-border">
+                <h5 class="card-title">VEHICLES</h5>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-full-width">
+                  <table class="table">
+                    <tbody>
+                      <tr v-for="item in vehiclestOut" :key="item._id">
+                        <td class="yellow">
+                          {{ item.number }} {{ item.plate }} {{ item.type.name }}
+                        </td>
+                      </tr>
+                      <tr v-for="item in vehiclesIn" :key="item._id">
+                        <td class="green">
+                          {{ item.number }} {{ item.plate }} {{ item.type.name }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
+            </div>
 
-              <div class="card card-margin bd-highlight flex-grow-1 mt-3">
-                <div class="card-header no-border">
-                  <h5 class="card-title">EMPLOYEES</h5>
-                </div>
-                <div class="card-body p-0">
-                  <div class="table-full-width">
-											<table class="table">
-												<tbody>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-													<tr>
-														<td>Planning new project structure</td>
-													</tr>
-												</tbody>
-											</table>
-										</div>
+            <div class="card card-margin bd-highlight flex-grow-1 mt-3">
+              <div class="card-header no-border">
+                <h5 class="card-title">EMPLOYEES</h5>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-full-width">
+                  <table class="table">
+                    <tbody>
+                      <tr v-for="item in employeesInShiftOut" :key="item._id">
+                        <td class="yellow">
+                          {{ item.name }} {{ item.surname }} {{ item.type.name }}
+                        </td>
+                      </tr>
+                      <tr v-for="item in employeesInShiftIn" :key="item._id">
+                        <td class="green">
+                          {{ item.name }} {{ item.surname }} {{ item.type.name }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
+            </div>
 
           </div>
 
@@ -212,15 +167,26 @@ import io from "socket.io-client";
 export default {
   data() {
     return {
-      incidents: []
+      employeesInShiftIn: [],
+      employeesInShiftOut: [],
+      vehiclesIn: [],
+      vehiclestOut: [],
+      incidents: [],
+      shiftsAvailable: []
     }
   },
   created() {
-    const socket = io(`/api/socket`);
+    const socket = io(`http://localhost/api/socket`);
 
     socket.on("displayNewData", (items) => {
-      this.incidents = items;
-      console.log(items);
+      if (items != null) {
+        if (items.employeesInShiftIn != null) this.employeesInShiftIn = items.employeesInShiftIn;
+        if (items.employeesInShiftOut != null) this.employeesInShiftOut = items.employeesInShiftOut;
+        if (items.vehiclesIn != null) this.vehiclesIn = items.vehiclesIn;
+        if (items.vehiclestOut != null) this.vehiclestOut = items.vehiclestOut;
+        if (items.incidents != null) this.incidents = items.incidents;
+        if (items.shiftsAvailable != null) this.shiftsAvailable = items.shiftsAvailable;
+      }
     });
   },
   components: {
@@ -228,6 +194,11 @@ export default {
     Slide,
     Navigation,
     IncidentCard,
+  },
+  methods: {
+    VehicleCount() {
+      return this.vehiclesIn.length;
+    }
   }
 }
 </script>
@@ -252,7 +223,14 @@ body {
 
 .carousel__viewport,
 .carousel__track {
-    height: 100%
+  height: 100%
 }
 
+.yellow {
+  background-color: #F9E79F !important;
+}
+
+.green {
+  background-color: #ABEBC6 !important;
+}
 </style>
