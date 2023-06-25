@@ -13,6 +13,10 @@ module.exports = mongoose => {
                 ref: "Employee",
                 required: true
             }],
+            status: {
+                type: Boolean,
+                default: 1
+            },
         }
     );
 

@@ -2,8 +2,7 @@ const db = require("../models");
 
 exports.create = (req, res) => {
     new db.shift({
-        started_at: new Date(),
-        ends_at: req.body.ends_at,
+        created_at: new Date(),
         employees: req.body.employees.map(a => a._id),
     }).save()
         .then(() => {
@@ -38,9 +37,14 @@ exports.findAll = (req, res) => {
 exports.update = (req, res) => {
     const id = req.params.id;
 
+    var ended_at = null;
+
+    if (String(req.body.status) == 'false') ended_at = new Date();
+
     db.shift.findByIdAndUpdate(id, {
-        ends_at: req.body.ends_at,
+        ended_at: ended_at,
         employees: req.body.employees.map(a => a._id),
+        status: req.body.status
     }, { useFindAndModify: false, runValidators: true })
         .then(data => {
             if (!data) {
@@ -58,25 +62,25 @@ exports.update = (req, res) => {
 
 exports.delete = (req, res) => {
     const id = req.params.id;
-   
-    db.incident.findOne({shifts: id}).then(data => {
+
+    db.incident.findOne({ shifts: id }).then(data => {
         if (!data) {
             db.shift.findByIdAndRemove(id)
-            .then(data => {
-                if (!data) {
-                  return res.status(404).send({ message: "Cannot delete." });
-                } else {
-                  return res.send({ message: "Deleted successfully!" });
-                }
-              })
-              .catch(() => {
-                return res.status(500).send({ message: "Cannot delete" });
-              });
-          } else {
+                .then(data => {
+                    if (!data) {
+                        return res.status(404).send({ message: "Cannot delete." });
+                    } else {
+                        return res.send({ message: "Deleted successfully!" });
+                    }
+                })
+                .catch(() => {
+                    return res.status(500).send({ message: "Cannot delete" });
+                });
+        } else {
             return res.status(500).send({ message: "Cannot delete because is used somewhere." });
-          }
-        })
-          .catch(() => {
+        }
+    })
+        .catch(() => {
             return res.status(500).send({ message: "Cannot delete" });
-          });
+        });
 };

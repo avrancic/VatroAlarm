@@ -27,7 +27,7 @@ exports.findAll = (req, res) => {
     const incidentTypes = db.incident_type.find()
     const incidentStatuses = db.incident_status.find()
 
-    const Shifts = db.shift.find({ends_at : { $gte: new Date() }}).populate("employees")
+    const Shifts = db.shift.find({status: 1}).populate("employees")
     const vehicles = db.vehicle.find().populate("type")
 
     Promise.all([incidents, incidentTypes, incidentStatuses, Shifts, vehicles]).then((returnedValues) => {

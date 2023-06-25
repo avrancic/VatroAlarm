@@ -39,16 +39,8 @@
                         <form>
                             <div class="mb-3">
                                 <label class="form-label">Employees:</label>
-                                <multiselect :multiple="true" v-model="addForm.employees" :options="employees"
+                                <multiselect :multiple="true" v-model="addForm.employees" :options="employees" track-by="_id"
                                     :custom-label="({ name, surname, type }) => `${name} ${surname} (${type.name})`" />
-                            </div>
-                            <div class="mb-3">
-                                <label for="addStatus" class="form-label">Status:</label>
-                                <select class="form-control" id="addStatus" v-model="addForm.status">
-                                    <option v-for="option in incidentStatuses" :key="option._id" :value="option._id">
-                                        {{ option.name }}
-                                    </option>
-                                </select>
                             </div>
                             <div class="btn-group" role="group">
                                 <button type="button" class="btn btn-primary btn-sm me-1"
@@ -87,9 +79,8 @@
                                 <label for="editStatus" class="form-label">Status:</label>
 
                                 <select class="form-control" id="editStatus" v-model="editForm.status">
-                                    <option v-for="option in incidentStatuses" :key="option._id" :value="option._id">
-                                        {{ option.name }}
-                                    </option>
+                                    <option value="true">Open</option>
+                                    <option value="false">Closed</option>
                                 </select>
                             </div>
                             <div class="btn-group" role="group">
@@ -117,7 +108,7 @@ export default {
             columns: [
                 {
                     label: 'Created',
-                    field: 'started_at',
+                    field: 'created_at',
                     type: 'date',
                     dateInputFormat: 'yyyy-MM-dd\'T\'HH:mm:ss.SSSSSSXXX',
                     dateOutputFormat: 'dd-MM-yyyy HH:mm',
@@ -126,7 +117,7 @@ export default {
                 },
                 {
                     label: 'Ended',
-                    field: 'ends_at',
+                    field: 'ended_at',
                     type: 'date',
                     dateInputFormat: 'yyyy-MM-dd\'T\'HH:mm:ss.SSSSSSXXX',
                     dateOutputFormat: 'dd-MM-yyyy HH:mm',
@@ -144,6 +135,7 @@ export default {
                     label: 'Status',
                     type: 'String',
                     field: 'status',
+                    formatFn: this.statusFn
                 },
                 {
                     field: 'after',
@@ -153,15 +145,14 @@ export default {
             activeAddModal: false,
             activeEditModal: false,
             addForm: {
-                type: '',
-                ends_at: Date.now(),
+                status: 1,
                 employees: [],
             },
             shifts: [],
             employees: [],
             editForm: {
                 id: '',
-                ends_at: '',
+                status: 1,
                 employees: [],
             },
             alertMessage: '',
@@ -173,6 +164,10 @@ export default {
         alert: MessageAlert
     },
     methods: {
+        statusFn(value) {
+            if (value) return "Open";
+            if (!value) return "Closed";
+        },
         employeesFn(value) {
             var out = "";
             var first = true;
@@ -236,10 +231,9 @@ export default {
             this.updateItem(this.editForm, this.editForm.id);
         },
         initForm() {
-            this.addForm.ends_at = Date.now();
             this.addForm.employees = [];
             this.editForm.id = '';
-            this.editForm.ends_at = '';
+            this.editForm.status = '';
             this.editForm.employees = [];
         },
         removeItem(itemID) {
@@ -270,8 +264,8 @@ export default {
         toggleEditModal(item) {
             if (item) {
                 this.editForm.id = item._id;
-                this.editForm.ends_at = item.ends_at;
                 this.editForm.employees = item.employees;
+                this.editForm.status = item.status;
             }
             const body = document.querySelector('body');
             this.activeEditModal = !this.activeEditModal;

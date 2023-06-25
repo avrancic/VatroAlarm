@@ -32,7 +32,7 @@ module.exports = server => {
     });
 
     function sendCanges() {
-        var shifts = db.shift.find({ ends_at: { $gte: new Date() } }).populate("employees");
+        var shifts = db.shift.find({ status: 1 }).populate("employees");
 
         var incidents = db.incident.find().populate({
             path: 'status',
