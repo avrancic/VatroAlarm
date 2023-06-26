@@ -73,7 +73,7 @@ export default {
     },
     watch: {
         centerCoordinates: function (newVal) {
-                this.center = newVal;
+            this.center = newVal;
         },
         markerCoordinates: function (newVal) {
             this.marker = newVal;

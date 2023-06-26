@@ -61,7 +61,7 @@ module.exports = server => {
             vehicles.forEach(vehicle => {
                 var test = incidentsOpen.find(i => i.vehicles.some(item => String(item._id) == String(vehicle._id)));
 
-                if (test == null) {
+                if (test != null) {
                     vehiclesIn.push(vehicle);
                 } else {
                     vehiclestOut.push(vehicle);

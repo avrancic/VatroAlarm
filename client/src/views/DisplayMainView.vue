@@ -151,8 +151,6 @@
 </template>
 
 <script>
-import 'vue3-carousel/dist/carousel.css'
-//import { Carousel, Slide, Navigation } from 'vue3-carousel'
 import IncidentCard from '@/components/DisplayIncidentCard.vue'
 import io from "socket.io-client";
 
@@ -165,7 +163,7 @@ export default {
       vehiclestOut: [],
       incidents: [],
       shiftsAvailable: [],
-      currentData: [],
+      currentData: {},
       incidentIndex: 0
     }
   },
@@ -181,10 +179,13 @@ export default {
         if (items.incidents != null) this.incidents = items.incidents;
         if (items.shiftsAvailable != null) this.shiftsAvailable = items.shiftsAvailable;
 
-        if (this.incidents && this.incidents.length != 0) {
-          this.incidentIndex = 0;
-          this.currentData = this.incidents[0];
-          console.log(this.currentData)
+        if (this.incidents) {
+          if (this.incidents.length != 0) {
+            this.incidentIndex = 0;
+            this.currentData = this.incidents[0];
+          } else {
+            this.currentData = {}
+          }
         }
       }
     });
@@ -193,24 +194,25 @@ export default {
 
     setInterval(function () {
       try {
-        if (test.incidents && test.incidents.length != 0) {
-          if (test.incidentIndex > test.incidents.length -1) {
+        if (!test.incidents) return;
+
+        if (test.incidents.length != 0) {
+          if (test.incidentIndex > test.incidents.length - 1) {
             test.incidentIndex = 0
           }
 
           test.currentData = test.incidents[test.incidentIndex];
 
           test.incidentIndex++;
+        } else {
+          this.currentData = {};
         }
       } catch (error) {
         console.log(error);
       }
-    }, 3000);
+    }, 20000);
   },
   components: {
-    //Carousel,
-    // Slide,
-    ///  Navigation,
     IncidentCard,
   },
 }
