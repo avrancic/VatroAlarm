@@ -417,6 +417,8 @@ export default {
                 });
         },
         toggleAddModal() {
+            this.initForm();
+            
             const body = document.querySelector('body');
             this.activeAddModal = !this.activeAddModal;
             if (this.activeAddModal) {
