@@ -6,35 +6,34 @@ exports.create = (req, res) => {
         employees: req.body.employees.map(a => a._id),
     }).save()
         .then(() => {
-            return res.status(200).send({ message: "Created!" });
+            return res.status(200).send({ message: "Shift created!" });
         })
         .catch(err => {
-            return res.status(500).send({ message: err });
+            return res.status(400).send({ message: "Shift cannot be createed!" });
         })
 };
 
 exports.findAll = (req, res) => {
-    const shifts = db.shift.find().populate({ path: 'employees', populate: { path: 'type' } }).sort( [['_id', -1]] )
+    const shifts = db.shift.find().populate({ path: 'employees', populate: { path: 'type' } }).sort([['_id', -1]])
     const employees = db.employee.find().populate("type")
 
     Promise.all([shifts, employees]).then((returnedValues) => {
         const [shifts, employees] = returnedValues;
 
-        if (shifts == null || employees == null) {
-            res.status(500).send({ message: "Error." });
-            return;
-        }
-
         return res.status(200).send({
             shifts: shifts,
             employees: employees,
         })
-    }).catch((error) => {
-        console.log(error)
+    }).catch(() => {
+        return res.status(500).json({ message: "Server error!" });
     });
 };
 
 exports.update = (req, res) => {
+    if (!req.body) {
+        return res.status(400).send({ message: "Data to update can not be empty!" });
+    }
+
     const id = req.params.id;
 
     var ended_at = null;
@@ -48,15 +47,11 @@ exports.update = (req, res) => {
     }, { useFindAndModify: false, runValidators: true })
         .then(data => {
             if (!data) {
-                return res.status(404).send({
-                    message: `Id ${id} not exits.`
-                });
-            } else return res.send({ message: "Updated successfully." });
+                return res.status(404).send({message: `Shift not found!`});
+            } else return res.status(200).send({message: `Shift updated!`});
         })
         .catch(err => {
-            return res.status(500).send({
-                message: "Error updating item with id=" + id
-            });
+            return res.status(500).send({ message: "Server error!" });
         });
 };
 
@@ -68,19 +63,19 @@ exports.delete = (req, res) => {
             db.shift.findByIdAndRemove(id)
                 .then(data => {
                     if (!data) {
-                        return res.status(404).send({ message: "Cannot delete." });
+                        return res.status(404).send({message: `Shift not found!`});
                     } else {
-                        return res.send({ message: "Deleted successfully!" });
+                        return res.status(200).send({message: `Shift deleted!`});
                     }
                 })
                 .catch(() => {
-                    return res.status(500).send({ message: "Cannot delete" });
+                    return res.status(500).send({ message: "Server error!" });
                 });
         } else {
-            return res.status(500).send({ message: "Cannot delete because is used somewhere." });
+            return res.status(400).send({ message: "Cannot delete shift because exists in incidents!" });
         }
     })
         .catch(() => {
-            return res.status(500).send({ message: "Cannot delete" });
+            return res.status(500).send({ message: "Server error!" });
         });
 };

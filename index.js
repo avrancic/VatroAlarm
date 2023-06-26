@@ -42,7 +42,6 @@ require("./routes/users.route")(app);
 require("./routes/vehicles.route")(app);
 require("./routes/incidents.route")(app);
 require("./routes/employees.route")(app);
-require("./routes/display.route")(app);
 require("./routes/shifts.route")(app);
 
 const PORT = process.env.PORT || 80;

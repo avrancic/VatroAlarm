@@ -34,21 +34,6 @@ module.exports = mongoose => {
     }
   );
 
-  schema.pre("save", function (next) {
-    const user = this;
-
-    if (user.isModified("password")) {
-      bcrypt.hash(user.password, 8).then(hash => {
-        user.password = hash;
-      })
-      .catch(err => {
-        next();
-      })
-    } else {
-      next();
-    }
-  });
-
   schema.methods.generateAuthToken = function () {
     const user = this;
 

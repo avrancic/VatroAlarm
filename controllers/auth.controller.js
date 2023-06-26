@@ -7,13 +7,13 @@ exports.login = (req, res) => {
   db.user.findByCredentials(username, password)
     .then(user => {
       if (!user) {
-        return res.status(401).json({ error: "Login failed! Check authentication credentials" });
+        return res.status(401).json({ message: "Login failed! Check authentication credentials" });
       }
 
       user.generateAuthToken().then(token => {
         return res.status(200).send({token: token});
       })
     }).catch(err => {
-      return res.status(401).json({ error: err });
+      return res.status(401).json({ message: err });
     });
 };
