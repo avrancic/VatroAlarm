@@ -38,7 +38,8 @@
                     </div>
                     <div class="modal-body">
                         <form>
-                            <Map @PickedLocation="mapOutput" style="height: 500px;"></Map>
+                            <Map @PickedLocation="mapOutput" :centerCoordinates="mapCenterCoordinates"
+                                :markerCoordinates="mapMarkerCoordinates" style="height: 500px;"></Map>
                             <br>
                             <div class="mb-3">
                                 <label for="addType" class="form-label">Type:</label>
@@ -109,7 +110,8 @@
                     </div>
                     <div class="modal-body">
                         <form>
-                            <Map @PickedLocation="mapOutput" style="height: 500px;"></Map>
+                            <Map @PickedLocation="mapOutput" :centerCoordinates="mapCenterCoordinates"
+                                :markerCoordinates="mapMarkerCoordinates" style="height: 500px;"></Map>
                             <br>
                             <div class="mb-3">
                                 <label for="editType" class="form-label">Type:</label>
@@ -145,7 +147,7 @@
                             <div class="mb-3">
                                 <label for="editEmployees" class="form-label">Shifts:</label>
                                 <multiselect :multiple="true" id="editEmployees" v-model="editForm.shifts" :options="shifts"
-                                :custom-label="shiftsLabel" track-by="_id" />
+                                    :custom-label="shiftsLabel" track-by="_id" />
                             </div>
                             <div class="mb-3">
                                 <label for="editStatus" class="form-label">Status:</label>
@@ -179,6 +181,8 @@ import Map from '@/components/AdminIncidentMap.vue';
 export default {
     data() {
         return {
+            mapCenterCoordinates: [13.639553292389696, 45.0831547052052],
+            mapMarkerCoordinates: [0, 0],
             vehicles: [],
             shifts: [],
             columns: [
@@ -272,9 +276,9 @@ export default {
         Map
     },
     methods: {
-        shiftsLabel({employees}) {
+        shiftsLabel({ employees }) {
             var out = "";
-         
+
             var first = true;
 
             for (const item in employees) {
@@ -284,7 +288,7 @@ export default {
 
                 first = false;
             }
-            
+
             return out;
         },
         vehicleFn(value) {
@@ -374,25 +378,27 @@ export default {
             this.updateItem(this.editForm, this.editForm.id);
         },
         initForm() {
-            this.addForm.type = '',
-                this.addForm.description = '',
-                this.addForm.city = '',
-                this.addForm.address = '',
-                this.addForm.latitude = 0,
-                this.addForm.longitude = 0,
-                this.addForm.vehicles = [],
-                this.addForm.shifts = [],
-                this.addForm.status = ''
+            this.addForm.type = '';
+            this.addForm.description = '';
+            this.addForm.city = '';
+            this.addForm.address = '';
+            this.addForm.latitude = 0;
+            this.addForm.longitude = 0;
+            this.addForm.vehicles = [];
+            this.addForm.shifts = [];
+            this.addForm.status = '';
             this.editForm.id = '';
-            this.editForm.type = '',
-                this.editForm.description = '',
-                this.editForm.city = '',
-                this.editForm.address = '',
-                this.editForm.latitude = 0,
-                this.editForm.longitude = 0,
-                this.editForm.vehicles = [],
-                this.editForm.shifts = [],
-                this.editForm.status = ''
+            this.editForm.type = '';
+            this.editForm.description = '';
+            this.editForm.city = '';
+            this.editForm.address = '';
+            this.editForm.latitude = 0;
+            this.editForm.longitude = 0;
+            this.editForm.vehicles = [];
+            this.editForm.shifts = [];
+            this.editForm.status = '';
+            this.mapCenterCoordinates = [13.639553292389696, 45.0831547052052];
+            this.mapMarkerCoordinates = [0, 0];
         },
         removeItem(itemID) {
             IncidentsDataService.delete(itemID)
@@ -431,6 +437,9 @@ export default {
                 this.editForm.vehicles = item.vehicles;
                 this.editForm.shifts = item.shifts;
                 this.editForm.status = item.status._id;
+
+                this.mapCenterCoordinates = [item.latitude, item.longitude];
+                this.mapMarkerCoordinates = [item.latitude, item.longitude];
             }
             const body = document.querySelector('body');
             this.activeEditModal = !this.activeEditModal;
@@ -461,6 +470,11 @@ export default {
             this.addForm.longitude = value.longitude;
             this.addForm.city = value.cityName;
             this.addForm.address = value.streetName;
+
+            this.editForm.latitude = value.latitude;
+            this.editForm.longitude = value.longitude;
+            this.editForm.city = value.cityName;
+            this.editForm.address = value.streetName;
         }
     },
     created() {
