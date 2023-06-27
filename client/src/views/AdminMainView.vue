@@ -9,6 +9,12 @@
             <br>
             <ul class="text-secondary">
                 <li>
+                    <a href="/display">
+                        <span>Display</span>
+                    </a>
+                </li>
+                <br>
+                <li>
                     <RouterLink :to="{ name: 'AdminIncidents' }">Incidents</RouterLink>
                 </li>
                 <li>
@@ -33,6 +39,7 @@
             <nav class="navbar navbar-expand-lg navbar-white bg-white">
                 <button type="button" id="sidebarCollapse" class="btn btn-light" @click="leftNavIsOpen = !leftNavIsOpen">| |
                     |</button>
+
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="nav navbar-nav ms-auto">
                         <li class="nav-item dropdown">

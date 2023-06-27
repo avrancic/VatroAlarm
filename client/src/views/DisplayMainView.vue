@@ -1,6 +1,33 @@
 <template>
   <div id="wrapper">
-    <div class="container-fluid min-vh-100 d-flex flex-column">
+    <div class="min-vh-100 d-flex flex-column">
+      <nav class="navbar navbar-expand-lg navbar-white bg-white">
+        <ul class="nav navbar-nav ms-auto">
+            <li class="nav-item">
+                <a href="/" class="nav-item nav-link text-secondary">
+                  <span>&lt;-- back to administration</span>
+                </a>
+            </li>
+          </ul>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="nav navbar-nav ms-auto">
+            <li class="nav-item dropdown">
+              <div class="nav-dropdown">
+                <a href="#" class="nav-item nav-link dropdown-toggle text-secondary" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <span>{{ (currentUser != null) ? currentUser.name : "" }}</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end nav-link-menu">
+                  <ul class="nav-list">
+                    <li><a href="" class="dropdown-item" @click.prevent="logOut">Logout</a></li>
+                  </ul>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
 
       <div class="row m-4">
         <div class="col-md-6 col-xl-3">
@@ -167,6 +194,13 @@ export default {
       incidentIndex: 0
     }
   },
+  computed: {
+    currentUser() {
+      if (this.$store.state.auth.data == null) return;
+
+      return this.$store.state.auth.data;
+    },
+  },
   created() {
     const socket = io(process.env.NODE_ENV === 'development' ? 'http://localhost/api/socket' : '/api/socket');
 
@@ -218,7 +252,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 *,
 ::after,
 ::before {
@@ -246,5 +280,12 @@ body {
 
 .green {
   background-color: #ABEBC6 !important;
+}
+
+.navbar {
+    padding: 0 1.5rem;
+    min-height: 54px;
+    box-shadow: none;
+    border-bottom: 1px solid rgba(101, 109, 119, .16);
 }
 </style>
