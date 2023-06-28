@@ -34,7 +34,9 @@ exports.update = (req, res) => {
     role: req.body.role
   }
 
-  if (req.body.password != null) {
+  const password = req.body.password;
+
+  if (password != null && password != "") {
     data.password = bcrypt.hashSync(req.body.password, 8)
   }
 
@@ -68,6 +70,8 @@ exports.findAll = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
+  if (req.userId == id) return res.status(400).send({message: `Cannot delete your own account!`});
+ 
   db.user.findByIdAndRemove(id)
     .then(data => {
       if (!data) {

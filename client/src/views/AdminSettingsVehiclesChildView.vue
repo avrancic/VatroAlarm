@@ -191,8 +191,6 @@ export default {
         .then(response => {
           this.vehiclesList = response.data.vehicles;
           this.vehicleTypes = response.data.vehicleTypes;
-
-          console.log(response.data);
         })
         .catch(e => {
           console.log(e);
