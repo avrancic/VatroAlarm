@@ -3,12 +3,12 @@
     <div class="min-vh-100 d-flex flex-column">
       <nav class="navbar navbar-expand-lg navbar-white bg-white">
         <ul class="nav navbar-nav ms-auto">
-            <li class="nav-item">
-                <a href="/" class="nav-item nav-link text-secondary">
-                  <span>&lt;-- back to administration</span>
-                </a>
-            </li>
-          </ul>
+          <li class="nav-item">
+            <a href="/" class="nav-item nav-link text-secondary">
+              <span>&lt;-- back to administration</span>
+            </a>
+          </li>
+        </ul>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="nav navbar-nav ms-auto">
@@ -202,6 +202,8 @@ export default {
     },
   },
   created() {
+    document.title = "Display"
+
     const socket = io(process.env.NODE_ENV === 'development' ? 'http://localhost/api/socket' : '/api/socket');
 
     socket.on("displayNewData", (items) => {
@@ -248,7 +250,7 @@ export default {
   },
   components: {
     IncidentCard,
-  },
+  }
 }
 </script>
 
@@ -283,9 +285,9 @@ body {
 }
 
 .navbar {
-    padding: 0 1.5rem;
-    min-height: 54px;
-    box-shadow: none;
-    border-bottom: 1px solid rgba(101, 109, 119, .16);
+  padding: 0 1.5rem;
+  min-height: 54px;
+  box-shadow: none;
+  border-bottom: 1px solid rgba(101, 109, 119, .16);
 }
 </style>
