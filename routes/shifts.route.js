@@ -1,14 +1,14 @@
 const { authJwt } = require("../middlewares");
 
 module.exports = app => {
-  const controller = require("../controllers/employees.controller.js");
+  const controller = require("../controllers/shifts.controller.js");
 
   var router = require("express").Router();
 
   router.post("/", [authJwt.verifyToken], controller.create);
   router.get("/", [authJwt.verifyToken], controller.findAll);
   router.put("/:id", [authJwt.verifyToken], controller.update);
-  router.delete("/:id",[authJwt.verifyToken], controller.delete);
+  router.delete("/:id", [authJwt.verifyToken], controller.delete);
 
-  app.use('/api/employees', router);
+  app.use('/api/shifts', router);
 };  

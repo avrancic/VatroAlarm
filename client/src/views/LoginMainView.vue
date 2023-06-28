@@ -55,6 +55,10 @@ export default {
     });
 
     return {
+      login: {
+        email: "",
+        password: ""
+      },
       loading: false,
       message: "",
       schema,

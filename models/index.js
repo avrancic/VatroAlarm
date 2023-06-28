@@ -15,6 +15,8 @@ db.incident = require("./incident.model")(mongoose);
 db.incident_type = require("./incident_type.model")(mongoose);
 db.incident_status = require("./incident_status.model")(mongoose);
 
+db.shift = require("./shift.model")(mongoose);
+
 db.employee = require("./employee.model")(mongoose);
 db.employee_type = require("./employee_type.model")(mongoose);
 

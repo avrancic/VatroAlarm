@@ -8,11 +8,12 @@ import AdminIncidentsChildView from '@/views/AdminIncidentsChildView.vue'
 import AdminSettingsVehiclesChildView from '@/views/AdminSettingsVehiclesChildView.vue'
 import AdminSettingsEmployeesChildView from '@/views/AdminSettingsEmployeesChildView.vue'
 import AdminSettingsUsersChildView from '@/views/AdminSettingsUsersChildView.vue'
+import AdminShiftsChildView from '@/views/AdminShiftsChildView.vue'
 
 const authGuard = (to, from, next) => {
   const publicPages = ['/login'];
   const authRequired = !publicPages.includes(to.path);
-  const loggedIn = localStorage.getItem('user');
+  const loggedIn = localStorage.getItem('jwl');
 
   if (authRequired && !loggedIn) {
     next('/login');
@@ -43,6 +44,7 @@ const routes = [
         { path: 'vehicles', name:'AdminSettingsVehicles', component: AdminSettingsVehiclesChildView },
         { path: 'employees', name:'AdminSettingsEmployees', component: AdminSettingsEmployeesChildView },
         { path: 'users', name:'AdminSettingsUsers', component: AdminSettingsUsersChildView },
+        { path: 'shifts', name:'AdminShifts', component: AdminShiftsChildView },
       ],
   }
 ]

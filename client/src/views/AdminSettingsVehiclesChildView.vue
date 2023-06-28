@@ -58,7 +58,7 @@
                 </select>
               </div>
               <div class="btn-group" role="group">
-                <button type="button" class="btn btn-primary btn-sm" @click="handleAddSubmit">Submit</button>
+                <button type="button" class="btn btn-primary btn-sm me-1" @click="handleAddSubmit">Submit</button>
                 <button type="button" class="btn btn-danger btn-sm" @click="handleAddReset">Reset</button>
               </div>
             </form>
@@ -103,7 +103,7 @@
                 </select>
               </div>
               <div class="btn-group" role="group">
-                <button type="button" class="btn btn-primary btn-sm" @click="handleEditSubmit">Submit</button>
+                <button type="button" class="btn btn-primary btn-sm me-1" @click="handleEditSubmit">Submit</button>
                 <button type="button" class="btn btn-danger btn-sm" @click="handleEditCancel">Cancel</button>
               </div>
             </form>

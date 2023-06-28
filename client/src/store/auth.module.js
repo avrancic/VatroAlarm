@@ -1,20 +1,22 @@
 import AuthService from '@/services/AuthService';
+import VueJwtDecode from "vue-jwt-decode";
 
-const user = JSON.parse(localStorage.getItem('user'));
+const jwl = localStorage.getItem('jwl');
 
-const initialState = user
-  ? { status: { loggedIn: true }, user }
-  : { status: { loggedIn: false }, user: null };
+const initialState = jwl != null
+  ? { status: { loggedIn: true }, data: VueJwtDecode.decode(jwl) }
+  : { status: { loggedIn: false }, data: null };
+
 
 export const auth = {
   namespaced: true,
   state: initialState,
   actions: {
-    login({ commit }, user) {
-      return AuthService.login(user).then(
-        user => {
-          commit('loginSuccess', user);
-          return Promise.resolve(user);
+    login({ commit }, login) {
+      return AuthService.login(login).then(
+        token => {
+          commit('loginSuccess', token);
+          return Promise.resolve(token);
         },
         error => {
           commit('loginFailure');
@@ -26,37 +28,19 @@ export const auth = {
       AuthService.logout();
       commit('logout');
     },
-    register({ commit }, user) {
-      return AuthService.register(user).then(
-        response => {
-          commit('registerSuccess');
-          return Promise.resolve(response.data);
-        },
-        error => {
-          commit('registerFailure');
-          return Promise.reject(error);
-        }
-      );
-    }
   },
   mutations: {
-    loginSuccess(state, user) {
+    loginSuccess(state, jwl) {
       state.status.loggedIn = true;
-      state.user = user;
+      state.data = VueJwtDecode.decode(jwl);
     },
     loginFailure(state) {
       state.status.loggedIn = false;
-      state.user = null;
+      state.data = null;
     },
     logout(state) {
       state.status.loggedIn = false;
-      state.user = null;
+      state.data = null;
     },
-    registerSuccess(state) {
-      state.status.loggedIn = false;
-    },
-    registerFailure(state) {
-      state.status.loggedIn = false;
-    }
   }
 };

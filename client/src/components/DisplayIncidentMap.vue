@@ -7,7 +7,7 @@
         <ol-vector-layer>
             <ol-source-vector>
                 <ol-feature>
-                    <ol-geom-point :coordinates="center"></ol-geom-point>
+                    <ol-geom-point :coordinates="marker"></ol-geom-point>
                     <ol-style>
                         <ol-style-icon :src="markerIcon" :scale="0.6" :size="[50, 152]"></ol-style-icon>
                     </ol-style>
@@ -23,11 +23,12 @@ import { ref } from "vue";
 import markerIcon from "@/assets/marker.png";
 
 export default {
-    props: ['latitude', 'longitude'],
+    props: ['CenterCoordinates', 'MarkerCoordinates'],
 
     data() {
         return {
-            center: ref([this.latitude, this.longitude]),
+            center: ref([13.639553292389696, 45.0831547052052]),
+            marker: [0, 0],
             projection: ref('EPSG:4326'),
             zoom: ref(15),
             rotation: ref(0),
@@ -35,5 +36,13 @@ export default {
             drawedMarker: ref()
         };
     },
+    watch: {
+        CenterCoordinates(newData) {
+            this.center = newData;
+        },
+        MarkerCoordinates(newData) {
+            this.marker = newData;
+        }
+    }
 }
 </script>

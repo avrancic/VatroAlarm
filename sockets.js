@@ -1,4 +1,8 @@
+const controller = require("./controllers/display.controller.js");
+
 module.exports = server => {
+    const db = require("./models");
+
     var corsOptions = {
         origin: "http://localhost:8080"
     };
@@ -7,28 +11,33 @@ module.exports = server => {
         cors: corsOptions
     });
 
-    io.of("/api/socket").on("connection", (socket) => {
+    io.of('/api/socket').on("connection", (socket) => {
         console.log("socket.io: User connected: ", socket.id);
 
         socket.on("disconnect", () => {
             console.log("socket.io: User disconnected: ", socket.id);
         });
 
-        sendCanges();
+        sendData();
 
         const stream = db.incident.watch();
 
-        stream.on("change", (change) => {
-            sendCanges();
+        stream.on("change", () => {
+            sendData();
+        });
+
+        const stream1 = db.shift.watch();
+
+        stream1.on("change", () => {
+            sendData();
         });
     });
 
-    function sendCanges() {
-        db.incident.find().populate('type').populate('vehicles').populate('employees').populate('status')
-            .then((value) => {
-                io.of("/api/socket").emit("displayNewData", value);
-            }).catch((error) => {
-                console.log(error)
-            });
+    function sendData() {
+        controller.getData().then(data => {
+            io.of("/api/socket").emit("displayNewData", data);
+        }).catch(error => {
+            console.log(error)
+        });
     };
 };

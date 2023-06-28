@@ -10,46 +10,46 @@ exports.create = (req, res) => {
         latitude: req.body.latitude,
         longitude: req.body.longitude,
         vehicles: req.body.vehicles.map(a => a._id),
-        employees: req.body.employees.map(a => a._id),
+        shifts: req.body.shifts.map(a => a._id),
         status: req.body.status,
     }).save()
         .then(() => {
-            return res.status(200).send({ message: "Created!" });
+            return res.status(200).send({ message: "Incident created!" });
         })
         .catch(err => {
-            return res.status(500).send({ message: err });
+            return res.status(400).send({ message: "Incident cannot be createed!" });
         })
 };
 
 exports.findAll = (req, res) => {
-    const incidentList = db.incident.find().populate('type').populate('vehicles').populate('employees').populate('status')
-    const incidentTypesList = db.incident_type.find()
-    const incidentStatusList = db.incident_status.find()
+    const incidents = db.incident.find().populate('type').populate('vehicles').populate('shifts').populate({ path: 'shifts', populate: { path: 'employees', populate: { path: 'type' } } })
+        .populate('status').sort([['_id', -1]])
+    const incidentTypes = db.incident_type.find()
+    const incidentStatuses = db.incident_status.find()
 
-    const employeesList = db.employee.find().populate("type")
-    const vehicleList = db.vehicle.find().populate("type")
+    const Shifts = db.shift.find({ status: 1 }).populate("employees")
+    const vehicles = db.vehicle.find().populate("type")
 
-    Promise.all([incidentList, incidentTypesList, incidentStatusList, employeesList, vehicleList]).then((returnedValues) => {
-        const [incidentListResult, incidentTypesListResult, incidentStatusListResult, employeesListResult, vehicleListResult] = returnedValues;
+    Promise.all([incidents, incidentTypes, incidentStatuses, Shifts, vehicles]).then((returnedValues) => {
+        const [incidents, incidentTypes, incidentStatuses, Shifts, vehicles] = returnedValues;
 
-        if (incidentListResult == null || incidentTypesListResult == null || incidentStatusListResult == null || employeesListResult == null || vehicleListResult == null) {
-            res.status(500).send({ message: "Error." });
-            return;
-        }
-
-        res.status(200).send({
-            incidents: incidentListResult,
-            incidentTypeList: incidentTypesListResult,
-            incidentStatusList: incidentStatusListResult,
-            employeesList: employeesListResult,
-            vehicleList: vehicleListResult
+        return res.status(200).send({
+            incidents: incidents,
+            incidentTypes: incidentTypes,
+            incidentStatuses: incidentStatuses,
+            shifts: Shifts,
+            vehicles: vehicles
         })
-    }).catch((error) => {
-        console.log(error)
+    }).catch(() => {
+        return res.status(500).json({ message: "Server error!" });
     });
 };
 
 exports.update = (req, res) => {
+    if (!req.body) {
+        return res.status(400).send({ message: "Data to update can not be empty!" });
+    }
+
     const id = req.params.id;
 
     db.incident.findByIdAndUpdate(id, {
@@ -60,20 +60,16 @@ exports.update = (req, res) => {
         longitude: req.body.longitude,
         type: req.body.type,
         vehicles: req.body.vehicles.map(a => a._id),
-        employees: req.body.employees.map(a => a._id),
+        shifts: req.body.shifts.map(a => a._id),
         status: req.body.status,
     }, { useFindAndModify: false, runValidators: true })
         .then(data => {
             if (!data) {
-                res.status(404).send({
-                    message: `Cannot update item with id=${id}.`
-                });
-            } else res.send({ message: "Item updated successfully." });
+                return res.status(404).send({message: `Incident not found!`});
+            } else return res.status(200).send({message: `Incident updated!`});
         })
         .catch(err => {
-            res.status(500).send({
-                message: "Error updating item with id=" + id
-            });
+            return res.status(500).send({ message: "Server error!" });
         });
 
 };
@@ -84,18 +80,12 @@ exports.delete = (req, res) => {
     db.incident.findByIdAndRemove(id)
         .then(data => {
             if (!data) {
-                res.status(404).send({
-                    message: `Cannot delete item with id=${id}.`
-                });
+                return res.status(404).send({message: `Incident not found!`});
             } else {
-                res.send({
-                    message: "Item was deleted successfully!"
-                });
+                return res.status(200).send({message: `Incident deleted!`});
             }
         })
-        .catch(err => {
-            res.status(500).send({
-                message: "Could not delete item with id=" + id
-            });
+        .catch(() => {
+            return res.status(500).send({ message: "Server error!" });
         });
 };

@@ -9,18 +9,27 @@
             <br>
             <ul class="text-secondary">
                 <li>
+                    <a href="/display">
+                        <span>Display</span>
+                    </a>
+                </li>
+                <br>
+                <li>
                     <RouterLink :to="{ name: 'AdminIncidents' }">Incidents</RouterLink>
+                </li>
+                <li>
+                    <RouterLink :to="{ name: 'AdminShifts' }">Shifts</RouterLink>
                 </li>
 
                 <br>
 
-                <li>
+                <li v-if="isAdmin">
                     <RouterLink :to="{ name: 'AdminSettingsVehicles' }">Vehicles list</RouterLink>
                 </li>
-                <li>
+                <li v-if="isAdmin">
                     <RouterLink :to="{ name: 'AdminSettingsEmployees' }">Employees list</RouterLink>
                 </li>
-                <li>
+                <li v-if="isAdmin">
                     <RouterLink :to="{ name: 'AdminSettingsUsers' }">Users</RouterLink>
                 </li>
             </ul>
@@ -30,6 +39,7 @@
             <nav class="navbar navbar-expand-lg navbar-white bg-white">
                 <button type="button" id="sidebarCollapse" class="btn btn-light" @click="leftNavIsOpen = !leftNavIsOpen">| |
                     |</button>
+
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="nav navbar-nav ms-auto">
                         <li class="nav-item dropdown">
@@ -63,7 +73,14 @@ export default {
     }),
     computed: {
         currentUser() {
-            return this.$store.state.auth.user;
+            if (this.$store.state.auth.data == null) return;
+
+            return this.$store.state.auth.data;
+        },
+        isAdmin() {
+            if (this.$store.state.auth.data == null) return false;
+
+            return this.$store.state.auth.data.role.name == "admin";
         }
     },
     methods: {
@@ -71,6 +88,9 @@ export default {
             this.$store.dispatch('auth/logout');
             this.$router.push('/login');
         }
+    },
+    created() {
+        document.title = "Administration"
     }
 };
 </script>

@@ -38,12 +38,13 @@
                     </div>
                     <div class="modal-body">
                         <form>
-                            <Map @PickedLocation="mapOutput" style="height: 500px;"></Map>
+                            <Map @PickedLocation="mapOutput" :centerCoordinates="mapCenterCoordinates"
+                                :markerCoordinates="mapMarkerCoordinates" style="height: 500px;"></Map>
                             <br>
                             <div class="mb-3">
                                 <label for="addType" class="form-label">Type:</label>
                                 <select class="form-control" id="addType" v-model="addForm.type">
-                                    <option v-for="option in incidentTypeList" :key="option._id" :value="option._id">
+                                    <option v-for="option in incidentTypes" :key="option._id" :value="option._id">
                                         {{ option.name }}
                                     </option>
                                 </select>
@@ -66,25 +67,24 @@
                             <div class="mb-3">
                                 <label for="addVehicles" class="form-label">Vehicles:</label>
                                 <multiselect :multiple="true" id="addVehicles" v-model="addForm.vehicles"
-                                    :options="vehicleList"
+                                    :options="vehicles"
                                     :custom-label="({ plate, model, number }) => `${number} - ${plate} (${model})`" />
                             </div>
                             <div class="mb-3">
-                                <label for="addEmployees" class="form-label">Employees:</label>
-                                <multiselect :multiple="true" id="addEmployees" v-model="addForm.employees"
-                                    :options="employeesList"
-                                    :custom-label="({ name, surname, type }) => `${name} ${surname} (${type.name})`" />
+                                <label for="addShifts" class="form-label">Shifts:</label>
+                                <multiselect :multiple="true" id="addShifts" v-model="addForm.shifts" :options="shifts"
+                                    track-by="_id" :custom-label="shiftsLabel" />
                             </div>
                             <div class="mb-3">
                                 <label for="addStatus" class="form-label">Status:</label>
                                 <select class="form-control" id="addStatus" v-model="addForm.status">
-                                    <option v-for="option in incidentStatusList" :key="option._id" :value="option._id">
+                                    <option v-for="option in incidentStatuses" :key="option._id" :value="option._id">
                                         {{ option.name }}
                                     </option>
                                 </select>
                             </div>
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-primary btn-sm"
+                                <button type="button" class="btn btn-primary btn-sm me-1"
                                     @click="handleAddSubmit">Submit</button>
                                 <button type="button" class="btn btn-danger btn-sm" @click="handleAddReset">Reset</button>
                             </div>
@@ -110,12 +110,13 @@
                     </div>
                     <div class="modal-body">
                         <form>
-                            <Map @PickedLocation="mapOutput" style="height: 500px;"></Map>
+                            <Map @PickedLocation="mapOutput" :centerCoordinates="mapCenterCoordinates"
+                                :markerCoordinates="mapMarkerCoordinates" style="height: 500px;"></Map>
                             <br>
                             <div class="mb-3">
                                 <label for="editType" class="form-label">Type:</label>
                                 <select class="form-control" id="editType" v-model="editForm.type">
-                                    <option v-for="option in incidentTypeList" :key="option._id" :value="option._id">
+                                    <option v-for="option in incidentTypes" :key="option._id" :value="option._id">
                                         {{ option.name }}
                                     </option>
                                 </select>
@@ -139,27 +140,26 @@
                             <div class="mb-3">
                                 <label for="editVehicles" class="form-label">Vehicles:</label>
                                 <multiselect :multiple="true" id="editVehicles" v-model="editForm.vehicles"
-                                    :options="vehicleList"
+                                    :options="vehicles" track-by="_id"
                                     :custom-label="({ plate, model, number }) => `${number} - ${plate} (${model})`" />
 
                             </div>
                             <div class="mb-3">
-                                <label for="editEmployees" class="form-label">Employees:</label>
-                                <multiselect :multiple="true" id="editEmployees" v-model="editForm.employees"
-                                    :options="employeesList"
-                                    :custom-label="({ name, surname, type }) => `${name} ${surname} (${type.name})`" />
+                                <label for="editEmployees" class="form-label">Shifts:</label>
+                                <multiselect :multiple="true" id="editEmployees" v-model="editForm.shifts" :options="shifts"
+                                    :custom-label="shiftsLabel" track-by="_id" />
                             </div>
                             <div class="mb-3">
-                                <label for="editStatus" class="form-label">Type:</label>
+                                <label for="editStatus" class="form-label">Status:</label>
 
                                 <select class="form-control" id="editStatus" v-model="editForm.status">
-                                    <option v-for="option in incidentStatusList" :key="option._id" :value="option._id">
+                                    <option v-for="option in incidentStatuses" :key="option._id" :value="option._id">
                                         {{ option.name }}
                                     </option>
                                 </select>
                             </div>
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-primary btn-sm"
+                                <button type="button" class="btn btn-primary btn-sm me-1"
                                     @click="handleEditSubmit">Submit</button>
                                 <button type="button" class="btn btn-danger btn-sm"
                                     @click="handleEditCancel">Cancel</button>
@@ -181,10 +181,10 @@ import Map from '@/components/AdminIncidentMap.vue';
 export default {
     data() {
         return {
-            vehicleList: [
-            ],
-            employeesList: [
-            ],
+            mapCenterCoordinates: [13.639553292389696, 45.0831547052052],
+            mapMarkerCoordinates: [0, 0],
+            vehicles: [],
+            shifts: [],
             columns: [
                 {
                     label: 'Created',
@@ -218,16 +218,14 @@ export default {
                     filterable: true,
                     placeholder: 'Vehicles',
                     formatFn: this.vehicleFn,
-
                 },
                 {
                     label: 'Employees',
                     type: 'String',
-                    field: 'employees',
+                    field: 'shifts',
                     filterable: true,
-                    placeholder: 'Employees',
-                    formatFn: this.employeesFn,
-
+                    placeholder: 'Shifts',
+                    formatFn: this.shiftsFn,
                 },
                 {
                     label: 'Status',
@@ -248,7 +246,7 @@ export default {
                 latitude: 0,
                 longitude: 0,
                 vehicles: [],
-                employees: [],
+                shifts: [],
                 status: ''
             },
             incidents: [],
@@ -261,15 +259,15 @@ export default {
                 latitude: 0,
                 longitude: 0,
                 vehicles: [],
-                employees: [],
+                shifts: [],
                 status: ''
             },
             alertMessage: '',
             alertMessageType: 1,
             showMessage: false,
-            incidentTypeList: [
+            incidentTypes: [
             ],
-            incidentStatusList: [
+            incidentStatuses: [
             ]
         };
     },
@@ -278,6 +276,21 @@ export default {
         Map
     },
     methods: {
+        shiftsLabel({ employees }) {
+            var out = "";
+
+            var first = true;
+
+            for (const item in employees) {
+                if (!first) out += ", "
+
+                out += employees[item].name + ' ' + employees[item].name;
+
+                first = false;
+            }
+
+            return out;
+        },
         vehicleFn(value) {
             var out = "";
             var first = true;
@@ -292,22 +305,24 @@ export default {
 
             return out;
         },
-        employeesFn(value) {
+        shiftsFn(value) {
             var out = "";
+
             var first = true;
 
             for (const item in value) {
-                if (!first) out += ", "
+                for (const item1 in value[item].employees) {
+                    if (!first) out += ", "
 
-                out += value[item].name + ' ' + value[item].surname;
+                    out += value[item].employees[item1].name + ' ';
+                    out += value[item].employees[item1].surname + ' ';
+                    out += ' (' + value[item].employees[item1].type.name + ')';
 
-                first = false;
+                    first = false;
+                }
             }
 
             return out;
-        },
-        vehiclesFn(rowObj) {
-            console.log(rowObj);
         },
         addItem(payload) {
             IncidentsDataService.create(payload)
@@ -329,11 +344,11 @@ export default {
             IncidentsDataService.getAll()
                 .then(response => {
                     this.incidents = response.data.incidents;
-                    this.incidentTypeList = response.data.incidentTypeList;
-                    this.incidentStatusList = response.data.incidentStatusList;
+                    this.incidentTypes = response.data.incidentTypes
+                    this.incidentStatuses = response.data.incidentStatuses;
 
-                    this.employeesList = response.data.employeesList;
-                    this.vehicleList = response.data.vehicleList;
+                    this.shifts = response.data.shifts;
+                    this.vehicles = response.data.vehicles;
                 })
                 .catch(e => {
                     console.log(e);
@@ -360,25 +375,27 @@ export default {
             this.updateItem(this.editForm, this.editForm.id);
         },
         initForm() {
-            this.addForm.type = '',
-                this.addForm.description = '',
-                this.addForm.city = '',
-                this.addForm.address = '',
-                this.addForm.latitude = 0,
-                this.addForm.longitude = 0,
-                this.addForm.vehicles = [],
-                this.addForm.employees = [],
-                this.addForm.status = ''
+            this.addForm.type = '';
+            this.addForm.description = '';
+            this.addForm.city = '';
+            this.addForm.address = '';
+            this.addForm.latitude = 0;
+            this.addForm.longitude = 0;
+            this.addForm.vehicles = [];
+            this.addForm.shifts = [];
+            this.addForm.status = '';
             this.editForm.id = '';
-            this.editForm.type = '',
-                this.editForm.description = '',
-                this.editForm.city = '',
-                this.editForm.address = '',
-                this.editForm.latitude = 0,
-                this.editForm.longitude = 0,
-                this.editForm.vehicles = [],
-                this.editForm.employees = [],
-                this.editForm.status = ''
+            this.editForm.type = '';
+            this.editForm.description = '';
+            this.editForm.city = '';
+            this.editForm.address = '';
+            this.editForm.latitude = 0;
+            this.editForm.longitude = 0;
+            this.editForm.vehicles = [];
+            this.editForm.shifts = [];
+            this.editForm.status = '';
+            this.mapCenterCoordinates = [13.639553292389696, 45.0831547052052];
+            this.mapMarkerCoordinates = [0, 0];
         },
         removeItem(itemID) {
             IncidentsDataService.delete(itemID)
@@ -415,8 +432,11 @@ export default {
                 this.editForm.latitude = item.latitude;
                 this.editForm.longitude = item.longitude;
                 this.editForm.vehicles = item.vehicles;
-                this.editForm.employees = item.employees;
+                this.editForm.shifts = item.shifts;
                 this.editForm.status = item.status._id;
+
+                this.mapCenterCoordinates = [item.latitude, item.longitude];
+                this.mapMarkerCoordinates = [item.latitude, item.longitude];
             }
             const body = document.querySelector('body');
             this.activeEditModal = !this.activeEditModal;
@@ -447,6 +467,11 @@ export default {
             this.addForm.longitude = value.longitude;
             this.addForm.city = value.cityName;
             this.addForm.address = value.streetName;
+
+            this.editForm.latitude = value.latitude;
+            this.editForm.longitude = value.longitude;
+            this.editForm.city = value.cityName;
+            this.editForm.address = value.streetName;
         }
     },
     created() {

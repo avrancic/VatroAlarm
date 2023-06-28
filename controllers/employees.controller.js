@@ -1,63 +1,35 @@
 const db = require("../models");
 
 exports.create = (req, res) => {
-  if (!req.body.name) {
-    res.status(400).send({ message: "Name can not be empty!" });
-    return;
-  }
-  if (!req.body.surname) {
-    res.status(400).send({ message: "Surname can not be empty!" });
-    return;
-  }
-  if (!req.body.type) {
-    res.status(400).send({ message: "Type can not be empty!" });
-    return;
-  }
-
   new db.employee({
     name: req.body.name,
     surname: req.body.surname,
     type: req.body.type
   }).save()
     .then(() => {
-      return res.status(200).send({ message: "Created!" });
+      return res.status(200).send({ message: "Employee created!" });
     })
     .catch(err => {
-      return res.status(500).send({ message: "Cannot be createed!" });
+      return res.status(400).send({ message: "Employee cannot be createed!" });
     })
 };
 
 exports.findAll = (req, res) => {
-  const employeesList = db.employee.find().populate('type')
-  const employeesTypesList = db.employee_type.find()
+  const employees = db.employee.find().populate('type')
+  const employeeTypes = db.employee_type.find()
 
-  Promise.all([employeesList, employeesTypesList]).then((returnedValues) => {
-    const [employeesListResult, employeesTypesListResult] = returnedValues;
+  Promise.all([employees, employeeTypes]).then((returnedValues) => {
+    const [employees, employeeTypes] = returnedValues;
 
-    if (employeesListResult == null) {
-      res.status(500).send({ message: "Error." });
-      return;
-    }
-
-    if (employeesTypesListResult == null) {
-      res.status(500).send({ message: "Error." });
-      return;
-    }
-
-    res.status(200).send({
-      employees: employeesListResult,
-      employeesTypes: employeesTypesListResult
-    })
-  }).catch((error) => {
-    console.log(error)
+    return res.status(200).send({ employees: employees, employeeTypes: employeeTypes })
+  }).catch(() => {
+    return res.status(500).json({ message: "Server error!" });
   });
 };
 
 exports.update = (req, res) => {
   if (!req.body) {
-    return res.status(400).send({
-      message: "Data to update can not be empty!"
-    });
+    return res.status(400).send({ message: "Data to update can not be empty!" });
   }
 
   const id = req.params.id;
@@ -69,36 +41,35 @@ exports.update = (req, res) => {
   }, { useFindAndModify: false, runValidators: true })
     .then(data => {
       if (!data) {
-        res.status(404).send({
-          message: `Cannot update item with id=${id}.`
-        });
-      } else res.send({ message: "Item updated successfully." });
+        return res.status(404).send({message: `Employee not found!`});
+      } else return res.status(200).send({message: `Employee updated!`});
     })
     .catch(err => {
-      res.status(500).send({
-        message: "Error updating item with id=" + id
-      });
+      return res.status(500).send({ message: "Server error!" });
     });
 };
 
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  db.employee.findByIdAndRemove(id)
-    .then(data => {
-      if (!data) {
-        res.status(404).send({
-          message: `Cannot delete item with id=${id}.`
+  db.shift.findOne({ employees: req.params.id }).then(data => {
+    if (!data) {
+      db.employee.findByIdAndRemove(id)
+        .then(data => {
+          if (!data) {
+            return res.status(404).send({message: `Employee not found!`});
+          } else {
+            return res.status(200).send({message: `Employee deleted!`});
+          }
+        })
+        .catch(() => {
+          return res.status(500).send({ message: "Server error!" });
         });
-      } else {
-        res.send({
-          message: "Item was deleted successfully!"
-        });
-      }
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Could not delete item with id=" + id
-      });
+    } else {
+      return res.status(400).send({ message: "Cannot delete employee because exists in shifts!" });
+    }
+  })
+    .catch(() => {
+      return res.status(500).send({ message: "Server error!" });
     });
 };

@@ -1,9 +1,9 @@
-import http from "../http-common";
+import http from "@/http-common";
 import auth from '@/services/AuthHeaderService';
 
 class AdminSettingsEmployeesDataService {
   getAll() {
-    return http.get("/api/employees");
+    return http.get("/api/employees", { headers: auth() });
   }
 
   get(id) {

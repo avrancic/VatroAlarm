@@ -9,7 +9,7 @@
           Add employee
         </button>
         <br><br>
-        <vue-good-table :rows="employeesList" :columns="columns" :pagination-options="{ enabled: true, mode: 'records' }">
+        <vue-good-table :rows="employees" :columns="columns" :pagination-options="{ enabled: true, mode: 'records' }">
           <template #table-row="props">
             <span v-if="props.column.field == 'after'">
               <button type="button" class="btn btn-warning btn-sm me-1" @click="toggleEditModal(props.row)">E</button>
@@ -48,13 +48,13 @@
               <div class="mb-3">
                 <label for="addType" class="form-label">Type:</label>
                 <select class="form-control" id="addType" v-model="addForm.type">
-                  <option v-for="option in employeesTypes" :key="option._id" :value="option._id">
+                  <option v-for="option in employeeTypes" :key="option._id" :value="option._id">
                     {{ option.name }}
                   </option>
                 </select>
               </div>
               <div class="btn-group" role="group">
-                <button type="button" class="btn btn-primary btn-sm" @click="handleAddSubmit">Submit</button>
+                <button type="button" class="btn btn-primary btn-sm me-1" @click="handleAddSubmit">Submit</button>
                 <button type="button" class="btn btn-danger btn-sm" @click="handleAddReset">Reset</button>
               </div>
             </form>
@@ -89,13 +89,13 @@
               <div class="mb-3">
                 <label for="editType" class="form-label">Type</label>
                 <select class="form-control" id="editType" v-model="editForm.type">
-                  <option v-for="option in employeesTypes" :key="option._id" :value="option._id">
+                  <option v-for="option in employeeTypes" :key="option._id" :value="option._id">
                     {{ option.name }}
                   </option>
                 </select>
               </div>
               <div class="btn-group" role="group">
-                <button type="button" class="btn btn-primary btn-sm" @click="handleEditSubmit">Submit</button>
+                <button type="button" class="btn btn-primary btn-sm me-1" @click="handleEditSubmit">Submit</button>
                 <button type="button" class="btn btn-danger btn-sm" @click="handleEditCancel">Cancel</button>
               </div>
             </form>
@@ -139,7 +139,7 @@ export default {
         surname: '',
         type: ''
       },
-      employeesList: [],
+      employees: [],
       editForm: {
         id: '',
         name: '',
@@ -149,7 +149,7 @@ export default {
       alertMessage: '',
       alertMessageType: 1,
       showMessage: false,
-      employeesTypes: [
+      employeeTypes: [
       ]
     };
   },
@@ -176,8 +176,8 @@ export default {
     getData() {
       EmployeesDataService.getAll()
         .then(response => {
-          this.employeesList = response.data.employees;
-          this.employeesTypes = response.data.employeesTypes;
+          this.employees = response.data.employees;
+          this.employeeTypes = response.data.employeeTypes;
           console.log(response.data);
         })
         .catch(e => {
