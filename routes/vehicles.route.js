@@ -5,10 +5,10 @@ module.exports = app => {
 
   var router = require("express").Router();
 
-  router.post("/", [authJwt.verifyToken], controller.create);
-  router.get("/", [authJwt.verifyToken], controller.findAll);
-  router.put("/:id", [authJwt.verifyToken], controller.update);
-  router.delete("/:id", [authJwt.verifyToken], controller.delete);
+  router.post("/", [authJwt.verifyToken, authJwt.isAdmin], controller.create);
+  router.get("/", [authJwt.verifyToken, authJwt.isAdmin], controller.findAll);
+  router.put("/:id", [authJwt.verifyToken, authJwt.isAdmin], controller.update);
+  router.delete("/:id", [authJwt.verifyToken, authJwt.isAdmin], controller.delete);
 
   app.use('/api/vehicles', router);
 };  

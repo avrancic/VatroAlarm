@@ -7,7 +7,6 @@ const initialState = jwl != null
   ? { status: { loggedIn: true }, data: VueJwtDecode.decode(jwl) }
   : { status: { loggedIn: false }, data: null };
 
-
 export const auth = {
   namespaced: true,
   state: initialState,

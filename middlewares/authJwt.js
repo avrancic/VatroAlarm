@@ -13,9 +13,12 @@ verifyToken = (req, res, next) => {
     if (err) {
       return res.status(401).send({ message: "Unauthorized!" });
     } else {
-      db.user.findOne({ 'tokens.token': token})
+      db.user.findOne({ 'tokens.token': token}).populate('role')
       .then(data => {
-        if (!data) return res.status(401).send({ message: "Unauthorized!1" });
+        if (!data) return res.status(401).send({ message: "Unauthorized!" });
+
+        req.userId = data._id;
+        req.userRole = data.role;
 
         next();
       })
@@ -23,8 +26,17 @@ verifyToken = (req, res, next) => {
   });
 };
 
+isAdmin = (req, res, next) => {
+ if (req.userRole.name !== 'admin') {
+  return res.status(403).send({ message: "Admin role is required!" });
+ } else {
+  next();
+ }
+};
+
 const authJwt = {
-  verifyToken
+  verifyToken,
+  isAdmin
 };
 
 module.exports = authJwt;

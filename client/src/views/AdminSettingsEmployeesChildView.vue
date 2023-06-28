@@ -178,7 +178,6 @@ export default {
         .then(response => {
           this.employees = response.data.employees;
           this.employeeTypes = response.data.employeeTypes;
-          console.log(response.data);
         })
         .catch(e => {
           console.log(e);
